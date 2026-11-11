@@ -1,0 +1,80 @@
+# An excerpt of engine/checks.py, copied for the code view on this page. The view reads only this copy.
+
+"""The checks: each rule in the spec, written once and run on every morning.
+
+An error-class flag holds that company's report for review, and the fund's report with it. An info flag is a
+note, like a budget variance or a volume day outside its band. 'expected' marks a difference the checks know is
+normal (a card deposit that settles tomorrow, a day the grid curtailed the site), so a look-alike is explained
+rather than flagged. Each result keeps the IDs it used, so its sentence on the page renders from the ledger.
+
+These rules were written after the planted catalog was frozen, against the demo seed and seed 11 only, then
+frozen themselves and scored once on held-out seeds (evals/check_runs.json).
+"""
+RANGE_RATIO = (0.55, 0.95)      # generation plus curtailment over capacity times sunlight
+CURTAILED_SHARE = 0.25          # past this share of the day's output, curtailment explains a low day
+
+# ...
+
+class Checker:
+
+    # ...
+
+    def sideoats(self, morning, ops, register, sites, battery, settlement, src_ids):
+        L = self.L
+        for sid, asset in register.items():
+            if asset["offtake"] == "arbitrage":
+                continue
+            parsed = sites.get(sid)
+            delivered = settlement["assets"].get(sid, {}).get("delivered_kwh") if settlement else None
+            name = asset["name"]
+            if parsed is None:
+                refs = [delivered] if delivered else []
+                L.check("sideoats", "continuity", "flag", "error", f"sideoats/{sid}", ops, morning,
+                        {"site": sid, "site_name": name, "delivered": delivered}, refs, [])
+                continue
+            L.check("sideoats", "continuity", "pass", "error", f"sideoats/{sid}", ops, morning,
+                    {"site": sid, "site_name": name}, [], [src_ids.get(sid)])
+            gen, cur, ins, cap = parsed["generation_kwh"], parsed["curtailment_kwh"], parsed["insolation"], asset["capacity"]
+            g, c, i, k = (L.value(x) for x in (gen, cur, ins, cap))
+            expected = L.derive(f"sideoats/{sid}", ops, "expected_kwh", "product", [cap, ins], k * i / 1000, "kwh",
+                                "capacity times the day's sunlight per square meter, the most the site could make")
+            ratio = L.derive(f"sideoats/{sid}", ops, "output_ratio", "ratio", [gen, cur, expected],
+                             (g + c) / (k * i / 1000) if k * i else None, "ratio",
+                             "generation plus curtailment over that ceiling")
+            r = L.value(ratio)
+            share = c / (g + c) if g + c else 0
+            if r is None or not RANGE_RATIO[0] <= r <= RANGE_RATIO[1]:
+                status = "flag"
+            elif share >= CURTAILED_SHARE:
+                status = "expected"
+            else:
+                status = "pass"
+            L.check("sideoats", "unit_range", status, "error", f"sideoats/{sid}", ops, morning,
+                    {"site": sid, "site_name": name, "gen": gen, "curtailment": cur, "expected": expected,
+                     "ratio": ratio, "low": RANGE_RATIO[0], "high": RANGE_RATIO[1]},
+                    [gen, cur, expected, ratio], [src_ids.get(sid)])
+            if delivered:
+                d = L.value(delivered)
+                loss = L.derive(f"sideoats/{sid}", ops, "line_loss", "ratio", [gen, delivered],
+                                1 - d / g if g else None, "ratio", "one minus delivered over generated")
+                lv = L.value(loss)
+                ok = lv is not None and LINE_LOSS[0] <= lv <= LINE_LOSS[1]
+                L.check("sideoats", "settlement_tie", "pass" if ok else "flag", "error", f"sideoats/{sid}", ops, morning,
+                        {"site": sid, "site_name": name, "gen": gen, "delivered": delivered, "loss": loss},
+                        [gen, delivered, loss], [src_ids.get(sid), src_ids.get("settlement")])
+        if battery:
+            sid = battery["asset"]
+            if L.value(battery["cycles"]):
+                rte = L.derive(f"sideoats/{sid}", ops, "round_trip", "ratio", [battery["discharge_kwh"], battery["charge_kwh"]],
+                               L.value(battery["discharge_kwh"]) / L.value(battery["charge_kwh"]), "ratio",
+                               "discharged over charged")
+                ok = BATTERY_RTE[0] <= L.value(rte) <= BATTERY_RTE[1]
+                L.check("sideoats", "unit_range", "pass" if ok else "flag", "error", f"sideoats/{sid}", ops, morning,
+                        {"site": sid, "site_name": register[sid]["name"], "rte": rte}, [rte], [src_ids.get("battery")])
+            paid = settlement["assets"].get(sid, {}).get("settlement") if settlement else None
+            if paid:
+                same = L.value(paid) == L.value(battery["arbitrage_revenue"])
+                L.check("sideoats", "settlement_tie", "pass" if same else "flag", "error", f"sideoats/{sid}", ops, morning,
+                        {"site": sid, "site_name": register[sid]["name"], "reported": battery["arbitrage_revenue"],
+                         "settled": paid}, [battery["arbitrage_revenue"], paid],
+                        [src_ids.get("battery"), src_ids.get("settlement")])

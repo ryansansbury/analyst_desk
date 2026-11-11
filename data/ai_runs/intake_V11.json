@@ -1,0 +1,508 @@
+{
+ "task_id": "intake_V11",
+ "task": "intake_mapper",
+ "prompt": {
+  "id": "intake_mapper",
+  "version": "1",
+  "sha256": "ad0089c987267830d066f8fea5051c315f4e45ef048079c5b850f26127860638",
+  "system": "You map the columns of a trucking company's TMS export to a fixed schema so the file can be loaded into a fund's ledger. The export's layout has changed and no parser recognizes it yet. Code checks your mapping before anyone uses it. It parses every row with your mapping, then checks the dates against the business day, the miles and dollar amounts against each other, the load IDs for duplicates, the totals row against the rows above it, and the revenue total against the invoicing system's batch. A wrong mapping fails those checks and the file is held, so map only what the rows support.\n\nThe input gives you the first two rows of the sheet, the next ten rows, the last two rows, the schema with each field's meaning, and the layout the parser already knows as an example.\n\nWhat to return:\n- header_rows: 2 when the first row holds group labels above the column names, and 1 when the first row is the column names.\n- columns: every column of the header row, in order, as [column name exactly as written, schema field]. Use null for a column the schema doesn't need. Each schema field appears exactly once.\n- date_format: the Python strptime format that parses the date column, like %Y-%m-%d. Test it against every sample row. A day above 12 tells a day-first date from a month-first one.\n- money_format: text for currency text like $1,234.56, plain for bare numbers, and paren for numbers with negatives in parentheses.\n- on_time: the exact cell values that mean on time and late, as strings. Read the column's name with care, because a column that asks whether a load was late turns the values around.\n- totals_label: the label of a totals row at the bottom exactly as written, or null when the last rows are loads.\n- confidence: a number from 0 to 1 for each schema field.\n- notes: one sentence on anything you were unsure of.\n\nSome columns look like a schema field and aren't, such as an index, a rate per mile, or a total that adds other columns together. Map those to null. A credit row has zero miles and a negative charge, and it's still data.\n\nReply with exactly one JSON object and nothing else."
+ },
+ "input": {
+  "task": "intake_mapper",
+  "file": "V11_2026-10-17.xlsx",
+  "top_rows": [
+   [
+    "LOAD",
+    "",
+    "",
+    "",
+    "MILES",
+    "",
+    "REVENUE",
+    "",
+    "",
+    "COST",
+    "SERVICE"
+   ],
+   [
+    "Pro #",
+    "Ship Date",
+    "Bill To",
+    "O/D",
+    "Trip Miles",
+    "Deadhead Miles",
+    "LH $",
+    "Fuel $",
+    "Acc $",
+    "Carrier $",
+    "Late?"
+   ]
+  ],
+  "sample_rows": [
+   [
+    "BB429765",
+    "16-Oct-2026",
+    "Caddo Lake Lumber",
+    "DAL-SHV",
+    "187",
+    "0",
+    "510.51",
+    "104.72",
+    "0.00",
+    "509.26",
+    "N"
+   ],
+   [
+    "BB429766",
+    "16-Oct-2026",
+    "Navasota Nursery",
+    "OKC-DAL",
+    "208",
+    "41",
+    "632.32",
+    "106.08",
+    "0.00",
+    "",
+    "N"
+   ],
+   [
+    "BB429767",
+    "16-Oct-2026",
+    "Big Thicket Furniture",
+    "HOU-BPT",
+    "84",
+    "0",
+    "191.52",
+    "47.04",
+    "0.00",
+    "194.39",
+    "N"
+   ],
+   [
+    "BB429768",
+    "16-Oct-2026",
+    "Comal Kitchen Brands",
+    "HOU-SAT",
+    "200",
+    "0",
+    "458.00",
+    "94.00",
+    "0.00",
+    "465.26",
+    "N"
+   ],
+   [
+    "BB429769",
+    "16-Oct-2026",
+    "Red River Plastics",
+    "HOU-DAL",
+    "239",
+    "38",
+    "630.96",
+    "131.45",
+    "250.00",
+    "",
+    "N"
+   ],
+   [
+    "BB429770",
+    "16-Oct-2026",
+    "Pecan Valley Foods",
+    "ELP-FTW",
+    "585",
+    "125",
+    "1,205.10",
+    "310.05",
+    "0.00",
+    "",
+    "Y"
+   ],
+   [
+    "BB429771",
+    "16-Oct-2026",
+    "San Gabriel Glassworks",
+    "LRD-SAT",
+    "162",
+    "27",
+    "417.96",
+    "77.76",
+    "0.00",
+    "",
+    "N"
+   ],
+   [
+    "BB429772",
+    "16-Oct-2026",
+    "Caddo Lake Lumber",
+    "FTW-ELP",
+    "602",
+    "38",
+    "1,842.12",
+    "337.12",
+    "250.00",
+    "",
+    "N"
+   ],
+   [
+    "BB429773",
+    "16-Oct-2026",
+    "Hill Country Home Goods",
+    "DAL-SHV",
+    "193",
+    "38",
+    "526.89",
+    "96.50",
+    "0.00",
+    "",
+    "N"
+   ],
+   [
+    "BB429774",
+    "16-Oct-2026",
+    "Comal Kitchen Brands",
+    "SAT-LRD",
+    "157",
+    "12",
+    "365.81",
+    "78.50",
+    "0.00",
+    "",
+    "N"
+   ]
+  ],
+  "last_rows": [
+   [
+    "BB429896",
+    "16-Oct-2026",
+    "Brazos Bottling",
+    "HOU-SAT",
+    "198",
+    "40",
+    "465.30",
+    "114.84",
+    "0.00",
+    "",
+    "N"
+   ],
+   [
+    "TOTAL",
+    "",
+    "",
+    "",
+    "34286",
+    "2728",
+    "88,303.99",
+    "17,531.49",
+    "3,450.00",
+    "37,071.25",
+    ""
+   ]
+  ],
+  "row_count": 135,
+  "schema": [
+   {
+    "field": "load_id",
+    "kind": "text",
+    "meaning": "the load's unique ID"
+   },
+   {
+    "field": "date",
+    "kind": "date",
+    "meaning": "the day the load shipped or was picked up"
+   },
+   {
+    "field": "customer",
+    "kind": "text",
+    "meaning": "the customer billed for the load"
+   },
+   {
+    "field": "lane",
+    "kind": "text",
+    "meaning": "origin and destination"
+   },
+   {
+    "field": "miles",
+    "kind": "whole number",
+    "meaning": "loaded miles"
+   },
+   {
+    "field": "empty_miles",
+    "kind": "whole number",
+    "meaning": "empty or deadhead miles driven to reach the load"
+   },
+   {
+    "field": "linehaul_rev",
+    "kind": "money",
+    "meaning": "linehaul revenue for the load"
+   },
+   {
+    "field": "fuel_surcharge",
+    "kind": "money",
+    "meaning": "fuel surcharge revenue for the load"
+   },
+   {
+    "field": "accessorials",
+    "kind": "money",
+    "meaning": "accessorial charges like detention or lumper fees, negative on a credit row"
+   },
+   {
+    "field": "carrier_cost",
+    "kind": "money",
+    "meaning": "what was paid to an outside carrier on a brokered load, blank on the company's own trucks"
+   },
+   {
+    "field": "on_time",
+    "kind": "yes or no",
+    "meaning": "whether the load was delivered on time"
+   }
+  ],
+  "known_layout_example": {
+   "header_rows": 2,
+   "columns": [
+    [
+     "Load #",
+     "load_id"
+    ],
+    [
+     "Ship Date",
+     "date"
+    ],
+    [
+     "Customer",
+     "customer"
+    ],
+    [
+     "Lane",
+     "lane"
+    ],
+    [
+     "Loaded Miles",
+     "miles"
+    ],
+    [
+     "Empty Miles",
+     "empty_miles"
+    ],
+    [
+     "Linehaul Rev",
+     "linehaul_rev"
+    ],
+    [
+     "Fuel Surcharge",
+     "fuel_surcharge"
+    ],
+    [
+     "Accessorials",
+     "accessorials"
+    ],
+    [
+     "Carrier Cost",
+     "carrier_cost"
+    ],
+    [
+     "On Time",
+     "on_time"
+    ]
+   ],
+   "date_format": "%m/%d/%Y",
+   "money_format": "text",
+   "on_time": {
+    "true": "Y",
+    "false": "N"
+   },
+   "totals_label": "TOTAL"
+  },
+  "formats": {
+   "date_format": "a Python strptime format string, like %m/%d/%Y",
+   "money_format": {
+    "text": "currency text like $1,234.56 and -$250.00",
+    "plain": "plain numbers like 1234.56 and -250",
+    "paren": "text like 1,234.56 with negatives in parentheses (250.00)"
+   }
+  }
+ },
+ "input_sha256": "e5f7a1086e052291fa42ab0351f2e4e1ecd38fb618d352f556abe6cb502ccb92",
+ "ids": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "raw": "{\"header_rows\": 2, \"columns\": [[\"Pro #\", \"load_id\"], [\"Ship Date\", \"date\"], [\"Bill To\", \"customer\"], [\"O/D\", \"lane\"], [\"Trip Miles\", \"miles\"], [\"Deadhead Miles\", \"empty_miles\"], [\"LH $\", \"linehaul_rev\"], [\"Fuel $\", \"fuel_surcharge\"], [\"Acc $\", \"accessorials\"], [\"Carrier $\", \"carrier_cost\"], [\"Late?\", \"on_time\"]], \"date_format\": \"%d-%b-%Y\", \"money_format\": \"plain\", \"on_time\": {\"true\": \"N\", \"false\": \"Y\"}, \"totals_label\": \"TOTAL\", \"confidence\": {\"load_id\": 0.97, \"date\": 0.95, \"customer\": 0.95, \"lane\": 0.95, \"miles\": 0.9, \"empty_miles\": 0.92, \"linehaul_rev\": 0.92, \"fuel_surcharge\": 0.93, \"accessorials\": 0.88, \"carrier_cost\": 0.92, \"on_time\": 0.9}, \"notes\": \"No sample row shows a negative amount, so plain versus paren for credit rows is unconfirmed, and 'Trip Miles' is taken as loaded miles because it sits beside a separate Deadhead Miles column.\"}",
+   "parsed": {
+    "header_rows": 2,
+    "columns": [
+     [
+      "Pro #",
+      "load_id"
+     ],
+     [
+      "Ship Date",
+      "date"
+     ],
+     [
+      "Bill To",
+      "customer"
+     ],
+     [
+      "O/D",
+      "lane"
+     ],
+     [
+      "Trip Miles",
+      "miles"
+     ],
+     [
+      "Deadhead Miles",
+      "empty_miles"
+     ],
+     [
+      "LH $",
+      "linehaul_rev"
+     ],
+     [
+      "Fuel $",
+      "fuel_surcharge"
+     ],
+     [
+      "Acc $",
+      "accessorials"
+     ],
+     [
+      "Carrier $",
+      "carrier_cost"
+     ],
+     [
+      "Late?",
+      "on_time"
+     ]
+    ],
+    "date_format": "%d-%b-%Y",
+    "money_format": "plain",
+    "on_time": {
+     "true": "N",
+     "false": "Y"
+    },
+    "totals_label": "TOTAL",
+    "confidence": {
+     "load_id": 0.97,
+     "date": 0.95,
+     "customer": 0.95,
+     "lane": 0.95,
+     "miles": 0.9,
+     "empty_miles": 0.92,
+     "linehaul_rev": 0.92,
+     "fuel_surcharge": 0.93,
+     "accessorials": 0.88,
+     "carrier_cost": 0.92,
+     "on_time": 0.9
+    },
+    "notes": "No sample row shows a negative amount, so plain versus paren for credit rows is unconfirmed, and 'Trip Miles' is taken as loaded miles because it sits beside a separate Deadhead Miles column."
+   },
+   "problems": [],
+   "meta": {
+    "ms": 6840,
+    "api_ms": 6700,
+    "input_tokens": 2,
+    "output_tokens": 669,
+    "cost_usd": 0.0718842,
+    "models": [
+     "claude-opus-5-5"
+    ]
+   }
+  }
+ ],
+ "final": {
+  "parsed": {
+   "header_rows": 2,
+   "columns": [
+    [
+     "Pro #",
+     "load_id"
+    ],
+    [
+     "Ship Date",
+     "date"
+    ],
+    [
+     "Bill To",
+     "customer"
+    ],
+    [
+     "O/D",
+     "lane"
+    ],
+    [
+     "Trip Miles",
+     "miles"
+    ],
+    [
+     "Deadhead Miles",
+     "empty_miles"
+    ],
+    [
+     "LH $",
+     "linehaul_rev"
+    ],
+    [
+     "Fuel $",
+     "fuel_surcharge"
+    ],
+    [
+     "Acc $",
+     "accessorials"
+    ],
+    [
+     "Carrier $",
+     "carrier_cost"
+    ],
+    [
+     "Late?",
+     "on_time"
+    ]
+   ],
+   "date_format": "%d-%b-%Y",
+   "money_format": "plain",
+   "on_time": {
+    "true": "N",
+    "false": "Y"
+   },
+   "totals_label": "TOTAL",
+   "confidence": {
+    "load_id": 0.97,
+    "date": 0.95,
+    "customer": 0.95,
+    "lane": 0.95,
+    "miles": 0.9,
+    "empty_miles": 0.92,
+    "linehaul_rev": 0.92,
+    "fuel_surcharge": 0.93,
+    "accessorials": 0.88,
+    "carrier_cost": 0.92,
+    "on_time": 0.9
+   },
+   "notes": "No sample row shows a negative amount, so plain versus paren for credit rows is unconfirmed, and 'Trip Miles' is taken as loaded miles because it sits beside a separate Deadhead Miles column."
+  },
+  "valid": true,
+  "problems": []
+ },
+ "model": "claude-opus-5-5",
+ "cli": {
+  "model": "opus",
+  "flags": [
+   "--model",
+   "--output-format",
+   "--system-prompt",
+   "--tools",
+   "--disallowedTools",
+   "--strict-mcp-config",
+   "--no-session-persistence"
+  ],
+  "tools_off": "--tools"
+ },
+ "recorded_at": "2026-10-27T19:01:31+00:00",
+ "seconds": 8.0,
+ "intake": {
+  "accepted": true,
+  "reasons": [],
+  "exact_match": false
+ }
+}

@@ -1,0 +1,1054 @@
+{
+ "task_id": "deal_analyst",
+ "task": "deal_analyst",
+ "prompt": {
+  "id": "deal_analyst",
+  "version": "3",
+  "sha256": "44e33b00629a438269b978555c73378aab6f279891d9107a53728f9c46464640",
+  "system": "You are the deal analyst preparing the first draft of a model of Brightrow Field Services for an investment committee. Brightrow is a commercial solar operations and maintenance business being carved out of a larger electrical contractor, and its fiscal years end September 30. The input gives three fiscal years of history with IDs, a few other figures from the data room, and the assumptions to propose with the range each value must fall in. Each assumption holds for all five projection years. The deal team sets the price, the debt and the tax rate, and those aren't yours to propose.\n\nFor each assumption, return:\n- value: a decimal fraction, like 0.085 for eight and a half percent. This number is the only place you write digits.\n- rationale: one or two sentences that explain the choice from the history.\n- cites: the IDs your rationale relies on, at least one.\n\nLean on the recent trend and say why when you move away from it. A first draft for a committee should be conservative and shouldn't project the best year forward.\n\nHow to write the rationale:\n- Every figure is a placeholder copied from the input and written exactly like {D:7}, with the colon. Never type a digit in the rationale. If a quantity isn't in the input, leave it out.\n- A placeholder carries its own unit. Never write percent or dollars right after one.\n- Write plain, factual sentences in a calm voice.\n- Use a comma only between the items of a list of three or more, written with a comma before the \"and\", or before and, but or or when it joins two full clauses. Never put a comma before so, and use one nowhere else.\n- No colons, semicolons or dashes, and no \"rather than\". No hype words such as strong, robust, impressive or significant.\n\nReply with exactly one JSON object and nothing else, in this form.\n{\"assumptions\": [{\"key\": \"growth_pm\", \"value\": 0.08, \"rationale\": \"one or two sentences\", \"cites\": [\"D3\", \"D9\"]}]}"
+ },
+ "input": {
+  "task": "deal_analyst",
+  "company": "Brightrow Field Services",
+  "situation": "a carve-out of a commercial solar operations and maintenance business from a larger electrical contractor, with fiscal years ending September 30",
+  "history": [
+   {
+    "fiscal_year": "FY2024",
+    "figures": [
+     {
+      "id": "D1",
+      "label": "total revenue, FY2024",
+      "shown": "$26.7M"
+     },
+     {
+      "id": "D2",
+      "label": "revenue, preventive maintenance contracts, FY2024, restated",
+      "shown": "$13.3M"
+     },
+     {
+      "id": "D3",
+      "label": "revenue, corrective repairs, FY2024, restated",
+      "shown": "$8.2M"
+     },
+     {
+      "id": "D4",
+      "label": "revenue, module cleaning, FY2024, restated",
+      "shown": "$3.1M"
+     },
+     {
+      "id": "D5",
+      "label": "revenue, monitoring subscriptions, FY2024, restated",
+      "shown": "$2.1M"
+     },
+     {
+      "id": "D6",
+      "label": "gross margin, FY2024",
+      "shown": "45.6%"
+     },
+     {
+      "id": "D7",
+      "label": "SG&A share of revenue without the parent's allocation, FY2024",
+      "shown": "25.5%"
+     },
+     {
+      "id": "D8",
+      "label": "adjusted EBITDA, FY2024",
+      "shown": "$4.4M"
+     },
+     {
+      "id": "D9",
+      "label": "adjusted EBITDA margin, FY2024",
+      "shown": "16.3%"
+     },
+     {
+      "id": "D10",
+      "label": "net working capital share of revenue, FY2024",
+      "shown": "8.1%"
+     },
+     {
+      "id": "D11",
+      "label": "capital spending share of revenue, FY2024",
+      "shown": "2.2%"
+     },
+     {
+      "id": "D12",
+      "label": "D&A share of revenue, FY2024",
+      "shown": "2.1%"
+     }
+    ]
+   },
+   {
+    "fiscal_year": "FY2025",
+    "figures": [
+     {
+      "id": "D13",
+      "label": "total revenue, FY2025",
+      "shown": "$29.8M"
+     },
+     {
+      "id": "D14",
+      "label": "revenue, preventive maintenance contracts, FY2025, restated",
+      "shown": "$14.6M"
+     },
+     {
+      "id": "D15",
+      "label": "revenue, corrective repairs, FY2025, restated",
+      "shown": "$8.9M"
+     },
+     {
+      "id": "D16",
+      "label": "revenue, module cleaning, FY2025, restated",
+      "shown": "$3.6M"
+     },
+     {
+      "id": "D17",
+      "label": "revenue, monitoring subscriptions, FY2025, restated",
+      "shown": "$2.7M"
+     },
+     {
+      "id": "D18",
+      "label": "growth, preventive maintenance contracts, FY2025",
+      "shown": "9.8%"
+     },
+     {
+      "id": "D19",
+      "label": "growth, corrective repairs, FY2025",
+      "shown": "8.5%"
+     },
+     {
+      "id": "D20",
+      "label": "growth, module cleaning, FY2025",
+      "shown": "16.1%"
+     },
+     {
+      "id": "D21",
+      "label": "growth, monitoring subscriptions, FY2025",
+      "shown": "28.6%"
+     },
+     {
+      "id": "D22",
+      "label": "gross margin, FY2025",
+      "shown": "46.2%"
+     },
+     {
+      "id": "D23",
+      "label": "SG&A share of revenue without the parent's allocation, FY2025",
+      "shown": "25.2%"
+     },
+     {
+      "id": "D24",
+      "label": "adjusted EBITDA, FY2025",
+      "shown": "$5.2M"
+     },
+     {
+      "id": "D25",
+      "label": "adjusted EBITDA margin, FY2025",
+      "shown": "17.6%"
+     },
+     {
+      "id": "D26",
+      "label": "net working capital share of revenue, FY2025",
+      "shown": "8.5%"
+     },
+     {
+      "id": "D27",
+      "label": "capital spending share of revenue, FY2025",
+      "shown": "2.3%"
+     },
+     {
+      "id": "D28",
+      "label": "D&A share of revenue, FY2025",
+      "shown": "1.9%"
+     }
+    ]
+   },
+   {
+    "fiscal_year": "FY2026",
+    "figures": [
+     {
+      "id": "D29",
+      "label": "total revenue, FY2026",
+      "shown": "$33.0M"
+     },
+     {
+      "id": "D30",
+      "label": "revenue, preventive maintenance contracts, FY2026, restated",
+      "shown": "$16.0M"
+     },
+     {
+      "id": "D31",
+      "label": "revenue, corrective repairs, FY2026, restated",
+      "shown": "$9.6M"
+     },
+     {
+      "id": "D32",
+      "label": "revenue, module cleaning, FY2026, restated",
+      "shown": "$4.1M"
+     },
+     {
+      "id": "D33",
+      "label": "revenue, monitoring subscriptions, FY2026, restated",
+      "shown": "$3.3M"
+     },
+     {
+      "id": "D34",
+      "label": "growth, preventive maintenance contracts, FY2026",
+      "shown": "9.6%"
+     },
+     {
+      "id": "D35",
+      "label": "growth, corrective repairs, FY2026",
+      "shown": "7.9%"
+     },
+     {
+      "id": "D36",
+      "label": "growth, module cleaning, FY2026",
+      "shown": "13.9%"
+     },
+     {
+      "id": "D37",
+      "label": "growth, monitoring subscriptions, FY2026",
+      "shown": "22.2%"
+     },
+     {
+      "id": "D38",
+      "label": "gross margin, FY2026",
+      "shown": "46.6%"
+     },
+     {
+      "id": "D39",
+      "label": "SG&A share of revenue without the parent's allocation, FY2026",
+      "shown": "25.1%"
+     },
+     {
+      "id": "D40",
+      "label": "adjusted EBITDA, FY2026",
+      "shown": "$6.1M"
+     },
+     {
+      "id": "D41",
+      "label": "adjusted EBITDA margin, FY2026",
+      "shown": "18.4%"
+     },
+     {
+      "id": "D42",
+      "label": "net working capital share of revenue, FY2026",
+      "shown": "8.9%"
+     },
+     {
+      "id": "D43",
+      "label": "capital spending share of revenue, FY2026",
+      "shown": "2.3%"
+     },
+     {
+      "id": "D44",
+      "label": "D&A share of revenue, FY2026",
+      "shown": "2.1%"
+     }
+    ]
+   }
+  ],
+  "other": [
+   {
+    "id": "D45",
+    "label": "contract renewal rate, FY2026",
+    "shown": "93.8%"
+   },
+   {
+    "id": "D46",
+    "label": "largest customer's share of revenue, FY2026",
+    "shown": "12.7%"
+   },
+   {
+    "id": "D47",
+    "label": "standalone corporate cost a year, from management's note",
+    "shown": "$1.0M"
+   }
+  ],
+  "propose": [
+   {
+    "key": "growth_pm",
+    "meaning": "annual revenue growth, preventive maintenance contracts",
+    "allowed_range": [
+     0.016,
+     0.148
+    ]
+   },
+   {
+    "key": "growth_cr",
+    "meaning": "annual revenue growth, corrective repairs",
+    "allowed_range": [
+     -0.001,
+     0.135
+    ]
+   },
+   {
+    "key": "growth_mc",
+    "meaning": "annual revenue growth, module cleaning",
+    "allowed_range": [
+     0.059,
+     0.211
+    ]
+   },
+   {
+    "key": "growth_ms",
+    "meaning": "annual revenue growth, monitoring subscriptions",
+    "allowed_range": [
+     0.142,
+     0.336
+    ]
+   },
+   {
+    "key": "gross_margin",
+    "meaning": "gross margin, all service lines together",
+    "allowed_range": [
+     0.426,
+     0.496
+    ]
+   },
+   {
+    "key": "sga_pct",
+    "meaning": "SG&A as a share of revenue, before the standalone corporate cost",
+    "allowed_range": [
+     0.221,
+     0.285
+    ]
+   },
+   {
+    "key": "da_pct",
+    "meaning": "depreciation and amortization as a share of revenue",
+    "allowed_range": [
+     0.004,
+     0.036
+    ]
+   },
+   {
+    "key": "capex_pct",
+    "meaning": "capital spending as a share of revenue",
+    "allowed_range": [
+     0.007,
+     0.038
+    ]
+   },
+   {
+    "key": "nwc_pct",
+    "meaning": "net working capital as a share of revenue",
+    "allowed_range": [
+     0.066,
+     0.104
+    ]
+   }
+  ]
+ },
+ "input_sha256": "6185e9635768e311c0d17384f292e436b509ceebf446b6bc15cd3b7f2ffff363",
+ "ids": {
+  "D1": {
+   "key": [
+    "D",
+    "brightrow",
+    "total_revenue",
+    "FY2024"
+   ],
+   "shown": "$26.7M",
+   "unit": "cents"
+  },
+  "D2": {
+   "key": [
+    "D",
+    "brightrow",
+    "revenue:pm",
+    "FY2024"
+   ],
+   "shown": "$13.3M",
+   "unit": "cents"
+  },
+  "D3": {
+   "key": [
+    "D",
+    "brightrow",
+    "restated:cr",
+    "FY2024"
+   ],
+   "shown": "$8.2M",
+   "unit": "cents"
+  },
+  "D4": {
+   "key": [
+    "D",
+    "brightrow",
+    "restated:mc",
+    "FY2024"
+   ],
+   "shown": "$3.1M",
+   "unit": "cents"
+  },
+  "D5": {
+   "key": [
+    "D",
+    "brightrow",
+    "revenue:ms",
+    "FY2024"
+   ],
+   "shown": "$2.1M",
+   "unit": "cents"
+  },
+  "D6": {
+   "key": [
+    "D",
+    "brightrow",
+    "gross_margin",
+    "FY2024"
+   ],
+   "shown": "45.6%",
+   "unit": "ratio"
+  },
+  "D7": {
+   "key": [
+    "D",
+    "brightrow",
+    "sga_pct",
+    "FY2024"
+   ],
+   "shown": "25.5%",
+   "unit": "ratio"
+  },
+  "D8": {
+   "key": [
+    "D",
+    "brightrow",
+    "adjusted_ebitda",
+    "FY2024"
+   ],
+   "shown": "$4.4M",
+   "unit": "cents"
+  },
+  "D9": {
+   "key": [
+    "D",
+    "brightrow",
+    "adjusted_margin",
+    "FY2024"
+   ],
+   "shown": "16.3%",
+   "unit": "ratio"
+  },
+  "D10": {
+   "key": [
+    "D",
+    "brightrow",
+    "nwc_pct",
+    "FY2024"
+   ],
+   "shown": "8.1%",
+   "unit": "ratio"
+  },
+  "D11": {
+   "key": [
+    "D",
+    "brightrow",
+    "capex_pct",
+    "FY2024"
+   ],
+   "shown": "2.2%",
+   "unit": "ratio"
+  },
+  "D12": {
+   "key": [
+    "D",
+    "brightrow",
+    "da_pct",
+    "FY2024"
+   ],
+   "shown": "2.1%",
+   "unit": "ratio"
+  },
+  "D13": {
+   "key": [
+    "D",
+    "brightrow",
+    "total_revenue",
+    "FY2025"
+   ],
+   "shown": "$29.8M",
+   "unit": "cents"
+  },
+  "D14": {
+   "key": [
+    "D",
+    "brightrow",
+    "revenue:pm",
+    "FY2025"
+   ],
+   "shown": "$14.6M",
+   "unit": "cents"
+  },
+  "D15": {
+   "key": [
+    "D",
+    "brightrow",
+    "restated:cr",
+    "FY2025"
+   ],
+   "shown": "$8.9M",
+   "unit": "cents"
+  },
+  "D16": {
+   "key": [
+    "D",
+    "brightrow",
+    "restated:mc",
+    "FY2025"
+   ],
+   "shown": "$3.6M",
+   "unit": "cents"
+  },
+  "D17": {
+   "key": [
+    "D",
+    "brightrow",
+    "revenue:ms",
+    "FY2025"
+   ],
+   "shown": "$2.7M",
+   "unit": "cents"
+  },
+  "D18": {
+   "key": [
+    "D",
+    "brightrow",
+    "growth:pm",
+    "FY2025"
+   ],
+   "shown": "9.8%",
+   "unit": "ratio"
+  },
+  "D19": {
+   "key": [
+    "D",
+    "brightrow",
+    "growth:cr",
+    "FY2025"
+   ],
+   "shown": "8.5%",
+   "unit": "ratio"
+  },
+  "D20": {
+   "key": [
+    "D",
+    "brightrow",
+    "growth:mc",
+    "FY2025"
+   ],
+   "shown": "16.1%",
+   "unit": "ratio"
+  },
+  "D21": {
+   "key": [
+    "D",
+    "brightrow",
+    "growth:ms",
+    "FY2025"
+   ],
+   "shown": "28.6%",
+   "unit": "ratio"
+  },
+  "D22": {
+   "key": [
+    "D",
+    "brightrow",
+    "gross_margin",
+    "FY2025"
+   ],
+   "shown": "46.2%",
+   "unit": "ratio"
+  },
+  "D23": {
+   "key": [
+    "D",
+    "brightrow",
+    "sga_pct",
+    "FY2025"
+   ],
+   "shown": "25.2%",
+   "unit": "ratio"
+  },
+  "D24": {
+   "key": [
+    "D",
+    "brightrow",
+    "adjusted_ebitda",
+    "FY2025"
+   ],
+   "shown": "$5.2M",
+   "unit": "cents"
+  },
+  "D25": {
+   "key": [
+    "D",
+    "brightrow",
+    "adjusted_margin",
+    "FY2025"
+   ],
+   "shown": "17.6%",
+   "unit": "ratio"
+  },
+  "D26": {
+   "key": [
+    "D",
+    "brightrow",
+    "nwc_pct",
+    "FY2025"
+   ],
+   "shown": "8.5%",
+   "unit": "ratio"
+  },
+  "D27": {
+   "key": [
+    "D",
+    "brightrow",
+    "capex_pct",
+    "FY2025"
+   ],
+   "shown": "2.3%",
+   "unit": "ratio"
+  },
+  "D28": {
+   "key": [
+    "D",
+    "brightrow",
+    "da_pct",
+    "FY2025"
+   ],
+   "shown": "1.9%",
+   "unit": "ratio"
+  },
+  "D29": {
+   "key": [
+    "D",
+    "brightrow",
+    "total_revenue",
+    "FY2026"
+   ],
+   "shown": "$33.0M",
+   "unit": "cents"
+  },
+  "D30": {
+   "key": [
+    "D",
+    "brightrow",
+    "revenue:pm",
+    "FY2026"
+   ],
+   "shown": "$16.0M",
+   "unit": "cents"
+  },
+  "D31": {
+   "key": [
+    "D",
+    "brightrow",
+    "restated:cr",
+    "FY2026"
+   ],
+   "shown": "$9.6M",
+   "unit": "cents"
+  },
+  "D32": {
+   "key": [
+    "D",
+    "brightrow",
+    "restated:mc",
+    "FY2026"
+   ],
+   "shown": "$4.1M",
+   "unit": "cents"
+  },
+  "D33": {
+   "key": [
+    "D",
+    "brightrow",
+    "revenue:ms",
+    "FY2026"
+   ],
+   "shown": "$3.3M",
+   "unit": "cents"
+  },
+  "D34": {
+   "key": [
+    "D",
+    "brightrow",
+    "growth:pm",
+    "FY2026"
+   ],
+   "shown": "9.6%",
+   "unit": "ratio"
+  },
+  "D35": {
+   "key": [
+    "D",
+    "brightrow",
+    "growth:cr",
+    "FY2026"
+   ],
+   "shown": "7.9%",
+   "unit": "ratio"
+  },
+  "D36": {
+   "key": [
+    "D",
+    "brightrow",
+    "growth:mc",
+    "FY2026"
+   ],
+   "shown": "13.9%",
+   "unit": "ratio"
+  },
+  "D37": {
+   "key": [
+    "D",
+    "brightrow",
+    "growth:ms",
+    "FY2026"
+   ],
+   "shown": "22.2%",
+   "unit": "ratio"
+  },
+  "D38": {
+   "key": [
+    "D",
+    "brightrow",
+    "gross_margin",
+    "FY2026"
+   ],
+   "shown": "46.6%",
+   "unit": "ratio"
+  },
+  "D39": {
+   "key": [
+    "D",
+    "brightrow",
+    "sga_pct",
+    "FY2026"
+   ],
+   "shown": "25.1%",
+   "unit": "ratio"
+  },
+  "D40": {
+   "key": [
+    "D",
+    "brightrow",
+    "adjusted_ebitda",
+    "FY2026"
+   ],
+   "shown": "$6.1M",
+   "unit": "cents"
+  },
+  "D41": {
+   "key": [
+    "D",
+    "brightrow",
+    "adjusted_margin",
+    "FY2026"
+   ],
+   "shown": "18.4%",
+   "unit": "ratio"
+  },
+  "D42": {
+   "key": [
+    "D",
+    "brightrow",
+    "nwc_pct",
+    "FY2026"
+   ],
+   "shown": "8.9%",
+   "unit": "ratio"
+  },
+  "D43": {
+   "key": [
+    "D",
+    "brightrow",
+    "capex_pct",
+    "FY2026"
+   ],
+   "shown": "2.3%",
+   "unit": "ratio"
+  },
+  "D44": {
+   "key": [
+    "D",
+    "brightrow",
+    "da_pct",
+    "FY2026"
+   ],
+   "shown": "2.1%",
+   "unit": "ratio"
+  },
+  "D45": {
+   "key": [
+    "D",
+    "brightrow",
+    "renewal_rate",
+    "FY2026"
+   ],
+   "shown": "93.8%",
+   "unit": "ratio"
+  },
+  "D46": {
+   "key": [
+    "D",
+    "brightrow",
+    "largest_share",
+    "FY2026"
+   ],
+   "shown": "12.7%",
+   "unit": "ratio"
+  },
+  "D47": {
+   "key": [
+    "D",
+    "brightrow",
+    "standalone_year",
+    "per year"
+   ],
+   "shown": "$1.0M",
+   "unit": "cents"
+  }
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "raw": "{\"assumptions\":[{\"key\":\"growth_pm\",\"value\":0.09,\"rationale\":\"Preventive maintenance growth was {D:34} after {D:18} and I use a lower rate to avoid extending the recent pace.\",\"cites\":[\"D18\",\"D34\"]},{\"key\":\"growth_cr\",\"value\":0.07,\"rationale\":\"Corrective repairs growth eased from {D:19} to {D:35} and I use a lower rate to reflect the recent slowdown.\",\"cites\":[\"D19\",\"D35\"]},{\"key\":\"growth_mc\",\"value\":0.12,\"rationale\":\"Module cleaning growth eased from {D:20} to {D:36} and I use a lower rate to avoid projecting the latest result forward.\",\"cites\":[\"D20\",\"D36\"]},{\"key\":\"growth_ms\",\"value\":0.18,\"rationale\":\"Monitoring subscriptions growth eased from {D:21} to {D:37} and I use a lower rate as growth continues to moderate.\",\"cites\":[\"D21\",\"D37\"]},{\"key\":\"gross_margin\",\"value\":0.46,\"rationale\":\"Gross margin rose from {D:6} through {D:22} to {D:38} and I use a rate below the latest result to avoid extending the annual gains.\",\"cites\":[\"D6\",\"D22\",\"D38\"]},{\"key\":\"sga_pct\",\"value\":0.255,\"rationale\":\"SG&A share declined from {D:7} through {D:23} to {D:39} and I hold near the earlier level instead of extending the gradual improvement.\",\"cites\":[\"D7\",\"D23\",\"D39\"]},{\"key\":\"da_pct\",\"value\":0.021,\"rationale\":\"D&A share moved from {D:12} to {D:28} and returned to {D:44} so I use the latest level.\",\"cites\":[\"D12\",\"D28\",\"D44\"]},{\"key\":\"capex_pct\",\"value\":0.023,\"rationale\":\"Capital spending share moved from {D:11} to {D:27} and remained at {D:43} so I use the recent level.\",\"cites\":[\"D11\",\"D27\",\"D43\"]},{\"key\":\"nwc_pct\",\"value\":0.09,\"rationale\":\"Net working capital share rose from {D:10} through {D:26} to {D:42} and I use a slightly higher rate to reflect the continuing increase.\",\"cites\":[\"D10\",\"D26\",\"D42\"]}]}",
+   "parsed": {
+    "assumptions": [
+     {
+      "key": "growth_pm",
+      "value": 0.09,
+      "rationale": "Preventive maintenance growth was {D:34} after {D:18} and I use a lower rate to avoid extending the recent pace.",
+      "cites": [
+       "D18",
+       "D34"
+      ]
+     },
+     {
+      "key": "growth_cr",
+      "value": 0.07,
+      "rationale": "Corrective repairs growth eased from {D:19} to {D:35} and I use a lower rate to reflect the recent slowdown.",
+      "cites": [
+       "D19",
+       "D35"
+      ]
+     },
+     {
+      "key": "growth_mc",
+      "value": 0.12,
+      "rationale": "Module cleaning growth eased from {D:20} to {D:36} and I use a lower rate to avoid projecting the latest result forward.",
+      "cites": [
+       "D20",
+       "D36"
+      ]
+     },
+     {
+      "key": "growth_ms",
+      "value": 0.18,
+      "rationale": "Monitoring subscriptions growth eased from {D:21} to {D:37} and I use a lower rate as growth continues to moderate.",
+      "cites": [
+       "D21",
+       "D37"
+      ]
+     },
+     {
+      "key": "gross_margin",
+      "value": 0.46,
+      "rationale": "Gross margin rose from {D:6} through {D:22} to {D:38} and I use a rate below the latest result to avoid extending the annual gains.",
+      "cites": [
+       "D6",
+       "D22",
+       "D38"
+      ]
+     },
+     {
+      "key": "sga_pct",
+      "value": 0.255,
+      "rationale": "SG&A share declined from {D:7} through {D:23} to {D:39} and I hold near the earlier level instead of extending the gradual improvement.",
+      "cites": [
+       "D7",
+       "D23",
+       "D39"
+      ]
+     },
+     {
+      "key": "da_pct",
+      "value": 0.021,
+      "rationale": "D&A share moved from {D:12} to {D:28} and returned to {D:44} so I use the latest level.",
+      "cites": [
+       "D12",
+       "D28",
+       "D44"
+      ]
+     },
+     {
+      "key": "capex_pct",
+      "value": 0.023,
+      "rationale": "Capital spending share moved from {D:11} to {D:27} and remained at {D:43} so I use the recent level.",
+      "cites": [
+       "D11",
+       "D27",
+       "D43"
+      ]
+     },
+     {
+      "key": "nwc_pct",
+      "value": 0.09,
+      "rationale": "Net working capital share rose from {D:10} through {D:26} to {D:42} and I use a slightly higher rate to reflect the continuing increase.",
+      "cites": [
+       "D10",
+       "D26",
+       "D42"
+      ]
+     }
+    ]
+   },
+   "problems": [],
+   "meta": {
+    "ms": 14190,
+    "input_tokens": 2733,
+    "output_tokens": 1480,
+    "cost_usd": 0.001013,
+    "usage": {
+     "prompt_tokens": 2733,
+     "completion_tokens": 1480,
+     "total_tokens": 4213,
+     "prompt_tokens_details": {
+      "cached_tokens": 2730,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0
+     },
+     "completion_tokens_details": {
+      "reasoning_tokens": 937,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+     }
+    },
+    "models": [
+     "gpt-6-luna"
+    ],
+    "stop_reason": "stop",
+    "answered_by": "gpt-6-luna",
+    "fell_back_from": []
+   }
+  }
+ ],
+ "final": {
+  "parsed": {
+   "assumptions": [
+    {
+     "key": "growth_pm",
+     "value": 0.09,
+     "rationale": "Preventive maintenance growth was {D:34} after {D:18} and I use a lower rate to avoid extending the recent pace.",
+     "cites": [
+      "D18",
+      "D34"
+     ]
+    },
+    {
+     "key": "growth_cr",
+     "value": 0.07,
+     "rationale": "Corrective repairs growth eased from {D:19} to {D:35} and I use a lower rate to reflect the recent slowdown.",
+     "cites": [
+      "D19",
+      "D35"
+     ]
+    },
+    {
+     "key": "growth_mc",
+     "value": 0.12,
+     "rationale": "Module cleaning growth eased from {D:20} to {D:36} and I use a lower rate to avoid projecting the latest result forward.",
+     "cites": [
+      "D20",
+      "D36"
+     ]
+    },
+    {
+     "key": "growth_ms",
+     "value": 0.18,
+     "rationale": "Monitoring subscriptions growth eased from {D:21} to {D:37} and I use a lower rate as growth continues to moderate.",
+     "cites": [
+      "D21",
+      "D37"
+     ]
+    },
+    {
+     "key": "gross_margin",
+     "value": 0.46,
+     "rationale": "Gross margin rose from {D:6} through {D:22} to {D:38} and I use a rate below the latest result to avoid extending the annual gains.",
+     "cites": [
+      "D6",
+      "D22",
+      "D38"
+     ]
+    },
+    {
+     "key": "sga_pct",
+     "value": 0.255,
+     "rationale": "SG&A share declined from {D:7} through {D:23} to {D:39} and I hold near the earlier level instead of extending the gradual improvement.",
+     "cites": [
+      "D7",
+      "D23",
+      "D39"
+     ]
+    },
+    {
+     "key": "da_pct",
+     "value": 0.021,
+     "rationale": "D&A share moved from {D:12} to {D:28} and returned to {D:44} so I use the latest level.",
+     "cites": [
+      "D12",
+      "D28",
+      "D44"
+     ]
+    },
+    {
+     "key": "capex_pct",
+     "value": 0.023,
+     "rationale": "Capital spending share moved from {D:11} to {D:27} and remained at {D:43} so I use the recent level.",
+     "cites": [
+      "D11",
+      "D27",
+      "D43"
+     ]
+    },
+    {
+     "key": "nwc_pct",
+     "value": 0.09,
+     "rationale": "Net working capital share rose from {D:10} through {D:26} to {D:42} and I use a slightly higher rate to reflect the continuing increase.",
+     "cites": [
+      "D10",
+      "D26",
+      "D42"
+     ]
+    }
+   ]
+  },
+  "valid": true,
+  "problems": []
+ },
+ "model": "gpt-6-luna",
+ "cli": {
+  "backend": "openai-compatible",
+  "vendor": "OpenAI",
+  "model": "gpt-6-luna",
+  "label": "GPT-6 Luna",
+  "route": [
+   "gpt-6-luna",
+   "haiku",
+   "gemini-3.8-flash",
+   "sonnet",
+   "gpt-6-astra",
+   "gemini-3.1-pro-preview",
+   "opus"
+  ]
+ },
+ "backend": "openai-compatible",
+ "recorded_at": "2026-10-28T23:51:39+00:00",
+ "seconds": 14.2
+}

@@ -1,0 +1,35 @@
+# An excerpt of engine/ledger.py, copied for the code view on this page. The view reads only this copy.
+
+"""The ledger: every number the fund uses lives here once, tied to the file, row or cell it came from.
+
+sources   every file received: company, morning, path, SHA-256, layout, kind, and whether it was accepted
+facts     values read from a source, each with its locator (sheet and cell range, row, or line), the raw text and
+          the plain-language step that turned it into a number
+derived   values computed from facts or other derived values, each with its operation over IDs
+checks    every check's result: rule, status (pass, flag, expected or info), severity, and the IDs involved
+claims    statements in documents set against the ledger, with their status
+
+IDs read F12, D7, K3, C2 and S5. Everything is inserted in a fixed order, so the same files always get the same
+IDs, and a copy of the ledger lets each planted-error scenario branch from the same 95 mornings of history.
+"""
+
+# ...
+
+class Ledger:
+
+    # ...
+
+    def fact(self, entity, period, metric, value, unit, source_id, locator, transform, raw=None, rows=None):
+        cur = self.conn.execute(
+            "INSERT INTO facts (entity, period, metric, value, unit, source_id, locator, transform, raw, rows) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?)",
+            (entity, period, metric, value, unit, split(source_id)[1], locator, transform, raw,
+             json.dumps(rows) if rows is not None else None))
+        return f"F{cur.lastrowid}"
+
+    def derive(self, entity, period, metric, op, inputs, value, unit, transform, extra=None):
+        cur = self.conn.execute(
+            "INSERT INTO derived (entity, period, metric, op, inputs, value, unit, transform, extra) VALUES (?,?,?,?,?,?,?,?,?)",
+            (entity, period, metric, op, json.dumps(list(inputs)), value, unit, transform,
+             json.dumps(extra) if extra is not None else None))
+        return f"D{cur.lastrowid}"

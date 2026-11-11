@@ -1,0 +1,4 @@
+{
+ "note": "Manual overrides of the deal analyst's proposals. A value here wins over the agent's, and the model and the page say so. Keys match the agent's assumption keys, and values are decimal fractions, like \"growth_cr\": 0.05.",
+ "overrides": {}
+}

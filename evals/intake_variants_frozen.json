@@ -1,0 +1,56 @@
+{
+ "frozen_at": "2026-11-06T12:23",
+ "answer_keys_sha256": "d4fe655f940f3215510a7fb82b92d6511474d5422ac35e9160980910bac9ae42",
+ "variants": [
+  "V01",
+  "V02",
+  "V03",
+  "V04",
+  "V05",
+  "V06",
+  "V07",
+  "V08",
+  "V09",
+  "V10",
+  "V11",
+  "V12"
+ ],
+ "demo_layout": "V00",
+ "files": {
+  "V01": "8de57a631d01784f8716cd2a53a3af16e7ab7f6b49435193a0097431be87fae9",
+  "V02": "83369a17c255132ef2b082c1e37616adcd589bba4e965c21a997d5f8a168fc08",
+  "V03": "5e125d95bbf578372bd9cb88013fb9b62acdc7a7fb92894c5ea93a72eee40fbb",
+  "V04": "2f5ba6e1f479d3fa850c459cb54e8afd6a33b3ee7c66ab97c3d032086c3c2e90",
+  "V05": "afb2fa773aa5b956d5bb20f24bc0d65a5a61df7810fc428ea4876511d64ed6da",
+  "V06": "5f7780665afe82b4f5618b9ba269756ce724e46a5a04d30e68bae57f916d4c60",
+  "V07": "0381fd91b346b8c5e332ac775f1c22ce4bacf1598f34dc0ed9032532c6308257",
+  "V08": "5c29290a53ed824cdad54743b1de544ce0a9dbf5756d65290639008286c76213",
+  "V09": "ed570bd5aec36b2441435da262e4b57449409f8508b6f7d74f4690053276aae8",
+  "V10": "94c2ddb4cb357d20c913fd16045a69d9027a3fb9cd0cb29866c1b9a51e660287",
+  "V11": "d411221625cde5a0d0e5c4897507d8d212c922bbd97d7194693a4026895e8eab",
+  "V12": "5759da1b81e2ca72654e121ec89e25ff3c62faa33f8db3379264c623efae8a4c"
+ },
+ "prompt_sha256": "ad0089c987267830d066f8fea5051c315f4e45ef048079c5b850f26127860638",
+ "history": [
+  {
+   "at": "2026-10-27T10:59",
+   "answer_keys_sha256": "d4fe655f940f3215510a7fb82b92d6511474d5422ac35e9160980910bac9ae42",
+   "reason": "first freeze, before any check or prompt was written"
+  },
+  {
+   "at": "2026-10-27T11:49",
+   "prompt_sha256": "ad0089c987267830d066f8fea5051c315f4e45ef048079c5b850f26127860638",
+   "reason": "the intake prompt frozen before any intake run was recorded"
+  },
+  {
+   "at": "2026-11-06T12:23",
+   "answer_keys_sha256": "d4fe655f940f3215510a7fb82b92d6511474d5422ac35e9160980910bac9ae42",
+   "reason": "The company and project names changed on 11/6 by a one-to-one swap of words, after a check found real companies with some of the old names. The catalog's logic, the keys it plants, and the eval files are otherwise the same as the 10/27 freeze."
+  },
+  {
+   "at": "2026-11-06T12:23",
+   "prompt_sha256": "ad0089c987267830d066f8fea5051c315f4e45ef048079c5b850f26127860638",
+   "reason": "Put back after the 11/6 name swap, which didn't touch the intake prompt."
+  }
+ ]
+}

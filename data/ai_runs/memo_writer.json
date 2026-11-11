@@ -1,0 +1,1285 @@
+{
+ "task_id": "memo_writer",
+ "task": "memo_writer",
+ "prompt": {
+  "id": "memo_writer",
+  "version": "3",
+  "sha256": "46b0c05c4ff977fdd4fdffe0431cd1fb71ce16514221beb3a81bb33b2bff6269",
+  "system": "You draft the investment committee memo for a first look at Brightrow Field Services, a commercial solar operations and maintenance business being carved out of a larger electrical contractor. It's a special situation in a niche vertical, and the committee wants a clear view of the business, the quality of its earnings, what the deal could return, how much debt it can carry, and what could go wrong. The input gives the model's outputs, the EBITDA adjustments, the customers, the operating KPIs, the claims check on the seller's teaser, and the history, each figure with an ID. Code draws the tables of historicals, returns, sensitivity and debt beside your text from the same ledger. Explain the figures and don't list every one.\n\nWrite these sections, in this order, with these ids:\n- recommendation: whether to pursue the deal to the next round and on what conditions.\n- business: what Brightrow does, for whom, and what the carve-out changes.\n- why_now: why this deal and this moment.\n- historicals: how revenue, margins and the service lines have moved over three years.\n- adjustments: the bridge from reported to adjusted EBITDA, item by item.\n- customers: concentration and what it means for the deal.\n- projections: the base case and the assumptions behind it.\n- returns: what the base case returns and how it moves with the entry and exit multiples.\n- debt: how much debt the business carries at close and how fast it comes down, against the illustrative covenants.\n- risks: the key risks and the questions for diligence. This section must cite every claims check result, like {C:1}, and explain each contradicted claim.\n- next_steps: what happens next and who does it.\n\nEach section has one to four paragraphs of two to four sentences. Then list two to four conditions for going to the next round.\n\nHow to write:\n- Every figure is a placeholder copied from the input and written exactly like {D:7}, with the colon. Never type a digit yourself, except a year like 2026. If a quantity isn't in the input, leave it out.\n- A variance ID already says above or below when it renders. Never put above, below, ahead or behind next to one.\n- A placeholder carries its own unit. Never write percent, dollars or x right after one.\n- Write plain, factual sentences in a calm voice, one thread per paragraph. Longer sentences that connect facts are good, and short punchy ones are not.\n- Use a comma only between the items of a list of three or more, written with a comma before the \"and\", or before and, but or or when it joins two full clauses. Never put a comma before so, and use one nowhere else.\n- No colons, semicolons or dashes, and no \"rather than\". No hype words such as strong, robust, compelling, attractive, impressive or significant.\n- This is a first draft for a person to review. State what the data shows and flag what it doesn't.\n\nReply with exactly one JSON object and nothing else, in this form.\n{\"sections\": [{\"id\": \"recommendation\", \"paragraphs\": [\"...\"]}], \"conditions\": [\"...\"]}"
+ },
+ "input": {
+  "task": "memo_writer",
+  "company": "Brightrow Field Services",
+  "situation": "a carve-out of a commercial solar operations and maintenance business from a larger electrical contractor, with fiscal years ending September 30 and a first round of bids in early 2027",
+  "model_outputs": [
+   {
+    "id": "D1",
+    "label": "entry enterprise value at the deal team's entry multiple",
+    "shown": "$48.6M"
+   },
+   {
+    "id": "D2",
+    "label": "transaction fees",
+    "shown": "$1.2M"
+   },
+   {
+    "id": "D3",
+    "label": "senior debt at close",
+    "shown": "$21.3M"
+   },
+   {
+    "id": "D4",
+    "label": "equity at close",
+    "shown": "$28.5M"
+   },
+   {
+    "id": "D5",
+    "label": "net leverage at close",
+    "shown": "3.5x"
+   },
+   {
+    "id": "D6",
+    "label": "FY2031 revenue in the base case",
+    "shown": "$52.9M"
+   },
+   {
+    "id": "D7",
+    "label": "FY2031 EBITDA in the base case",
+    "shown": "$9.6M"
+   },
+   {
+    "id": "D8",
+    "label": "revenue growth a year from FY2026 to FY2031",
+    "shown": "9.9%"
+   },
+   {
+    "id": "D9",
+    "label": "FY2031 EBITDA margin",
+    "shown": "18.3%"
+   },
+   {
+    "id": "D10",
+    "label": "exit enterprise value",
+    "shown": "$77.2M"
+   },
+   {
+    "id": "D11",
+    "label": "net debt at exit",
+    "shown": "$3.4M"
+   },
+   {
+    "id": "D12",
+    "label": "equity at exit",
+    "shown": "$73.8M"
+   },
+   {
+    "id": "D13",
+    "label": "MOIC",
+    "shown": "2.6x"
+   },
+   {
+    "id": "D14",
+    "label": "IRR",
+    "shown": "20.9%"
+   },
+   {
+    "id": "D15",
+    "label": "debt repaid over five years",
+    "shown": "$11.6M"
+   },
+   {
+    "id": "D16",
+    "label": "FY2027 interest coverage",
+    "shown": "3.2x"
+   },
+   {
+    "id": "D17",
+    "label": "FY2027 net leverage",
+    "shown": "3.0x"
+   },
+   {
+    "id": "D18",
+    "label": "FY2031 net leverage",
+    "shown": "0.4x"
+   },
+   {
+    "id": "D19",
+    "label": "smallest headroom to the illustrative leverage covenant",
+    "shown": "1.5x"
+   },
+   {
+    "id": "D20",
+    "label": "MOIC at the lowest entry and exit multiples in the grid",
+    "shown": "2.9x"
+   },
+   {
+    "id": "D21",
+    "label": "MOIC at the lowest entry and highest exit multiple",
+    "shown": "3.7x"
+   },
+   {
+    "id": "D22",
+    "label": "MOIC at the highest entry and lowest exit multiple",
+    "shown": "1.8x"
+   },
+   {
+    "id": "D23",
+    "label": "IRR at the highest entry and lowest exit multiple",
+    "shown": "13.0%"
+   },
+   {
+    "id": "D24",
+    "label": "IRR at the lowest entry and highest exit multiple",
+    "shown": "30.2%"
+   }
+  ],
+  "deal_terms": [
+   {
+    "id": "F1",
+    "label": "entry multiple",
+    "shown": "8.0x"
+   },
+   {
+    "id": "F2",
+    "label": "exit multiple",
+    "shown": "8.0x"
+   },
+   {
+    "id": "F3",
+    "label": "senior debt at close as a multiple of EBITDA",
+    "shown": "3.5x"
+   },
+   {
+    "id": "F4",
+    "label": "interest rate on the term loan",
+    "shown": "9.5%"
+   }
+  ],
+  "assumptions": [
+   {
+    "id": "D25",
+    "label": "annual revenue growth, preventive maintenance contracts used in the model (agent)",
+    "shown": "9.0%"
+   },
+   {
+    "id": "D26",
+    "label": "annual revenue growth, corrective repairs used in the model (agent)",
+    "shown": "7.0%"
+   },
+   {
+    "id": "D27",
+    "label": "annual revenue growth, module cleaning used in the model (agent)",
+    "shown": "12.0%"
+   },
+   {
+    "id": "D28",
+    "label": "annual revenue growth, monitoring subscriptions used in the model (agent)",
+    "shown": "18.0%"
+   },
+   {
+    "id": "D29",
+    "label": "gross margin, all service lines together used in the model (agent)",
+    "shown": "46.0%"
+   },
+   {
+    "id": "D30",
+    "label": "SG&A as a share of revenue, before the standalone corporate cost used in the model (agent)",
+    "shown": "25.5%"
+   },
+   {
+    "id": "D31",
+    "label": "depreciation and amortization as a share of revenue used in the model (agent)",
+    "shown": "2.1%"
+   },
+   {
+    "id": "D32",
+    "label": "capital spending as a share of revenue used in the model (agent)",
+    "shown": "2.3%"
+   },
+   {
+    "id": "D33",
+    "label": "net working capital as a share of revenue used in the model (agent)",
+    "shown": "9.0%"
+   }
+  ],
+  "adjustments": [
+   {
+    "id": "D34",
+    "label": "FY2026 reported EBITDA",
+    "shown": "$5.6M"
+   },
+   {
+    "id": "D35",
+    "label": "FY2026 overhead allocation from the parent, added back",
+    "shown": "$1.5M"
+   },
+   {
+    "id": "D36",
+    "label": "standalone corporate cost a year, which replaces it",
+    "shown": "$1.0M"
+   },
+   {
+    "id": "D37",
+    "label": "FY2025 one-time legal settlement, added back",
+    "shown": "$412K"
+   },
+   {
+    "id": "D38",
+    "label": "FY2026 adjusted EBITDA",
+    "shown": "$6.1M"
+   },
+   {
+    "id": "D39",
+    "label": "FY2026 reported EBITDA margin",
+    "shown": "17.0%"
+   },
+   {
+    "id": "D40",
+    "label": "FY2026 adjusted EBITDA margin",
+    "shown": "18.4%"
+   },
+   {
+    "id": "D41",
+    "label": "the seller's margin basis with the allocation added back and no standalone cost",
+    "shown": "21.5%"
+   }
+  ],
+  "history": [
+   {
+    "id": "D42",
+    "label": "FY2024 revenue",
+    "shown": "$26.7M"
+   },
+   {
+    "id": "D43",
+    "label": "FY2025 revenue",
+    "shown": "$29.8M"
+   },
+   {
+    "id": "D44",
+    "label": "FY2026 revenue",
+    "shown": "$33.0M"
+   },
+   {
+    "id": "D45",
+    "label": "FY2026 gross margin",
+    "shown": "46.6%"
+   },
+   {
+    "id": "D46",
+    "label": "FY2026 revenue, preventive maintenance contracts, restated",
+    "shown": "$16.0M"
+   },
+   {
+    "id": "D47",
+    "label": "FY2026 revenue, corrective repairs, restated",
+    "shown": "$9.6M"
+   },
+   {
+    "id": "D48",
+    "label": "FY2026 revenue, module cleaning, restated",
+    "shown": "$4.1M"
+   },
+   {
+    "id": "D49",
+    "label": "FY2026 revenue, monitoring subscriptions, restated",
+    "shown": "$3.3M"
+   },
+   {
+    "id": "D50",
+    "label": "FY2026 growth, preventive maintenance contracts",
+    "shown": "9.6%"
+   },
+   {
+    "id": "D51",
+    "label": "FY2026 growth, corrective repairs",
+    "shown": "7.9%"
+   },
+   {
+    "id": "D52",
+    "label": "FY2026 growth, module cleaning",
+    "shown": "13.9%"
+   },
+   {
+    "id": "D53",
+    "label": "FY2026 growth, monitoring subscriptions",
+    "shown": "22.2%"
+   }
+  ],
+  "customers": [
+   {
+    "id": "D54",
+    "label": "the largest customer's FY2026 revenue",
+    "shown": "$4.2M"
+   },
+   {
+    "id": "D55",
+    "label": "the largest customer's share of FY2026 revenue",
+    "shown": "12.7%"
+   },
+   {
+    "id": "D56",
+    "label": "the ten largest customers' share of FY2026 revenue",
+    "shown": "58.8%"
+   }
+  ],
+  "kpis": [
+   {
+    "id": "F5",
+    "label": "MW under contract in September 2026",
+    "shown": "1,414 MW"
+   },
+   {
+    "id": "F6",
+    "label": "MW under contract in October 2023",
+    "shown": "1,037 MW"
+   },
+   {
+    "id": "F7",
+    "label": "field technicians in September 2026",
+    "shown": "151"
+   },
+   {
+    "id": "F8",
+    "label": "average response time in September 2026",
+    "shown": "6.2 hours"
+   },
+   {
+    "id": "D57",
+    "label": "FY2026 contract renewal rate",
+    "shown": "93.8%"
+   }
+  ],
+  "claims_check": [
+   {
+    "id": "C1",
+    "claim": "Recurring, contracted revenue. Preventive maintenance contracts and monitoring subscriptions provide a predictable base, and contract renewal rates have stayed above 90% through the last twelve months.",
+    "result": "supported"
+   },
+   {
+    "id": "C2",
+    "claim": "Attractive margins. Brightrow has delivered EBITDA margins above 20% over the last twelve months, supported by route density and disciplined pricing.",
+    "result": "contradicted"
+   },
+   {
+    "id": "C3",
+    "claim": "Diversified customer base. No customer accounts for more than 10% of revenue, and the Company serves commercial owners, community solar funds and school districts across Texas and Oklahoma.",
+    "result": "contradicted"
+   }
+  ]
+ },
+ "input_sha256": "71e4c32d142ecd42ca0249ff5da78fa7e305677cbdf1cba02787f6627135abe6",
+ "ids": {
+  "D1": {
+   "key": [
+    "D",
+    "brightrow",
+    "ev",
+    "model"
+   ],
+   "shown": "$48.6M",
+   "unit": "cents"
+  },
+  "D2": {
+   "key": [
+    "D",
+    "brightrow",
+    "fees",
+    "model"
+   ],
+   "shown": "$1.2M",
+   "unit": "cents"
+  },
+  "D3": {
+   "key": [
+    "D",
+    "brightrow",
+    "debt0",
+    "model"
+   ],
+   "shown": "$21.3M",
+   "unit": "cents"
+  },
+  "D4": {
+   "key": [
+    "D",
+    "brightrow",
+    "equity0",
+    "model"
+   ],
+   "shown": "$28.5M",
+   "unit": "cents"
+  },
+  "D5": {
+   "key": [
+    "D",
+    "brightrow",
+    "net_leverage_0",
+    "model"
+   ],
+   "shown": "3.5x",
+   "unit": "multiple"
+  },
+  "D6": {
+   "key": [
+    "D",
+    "brightrow",
+    "revenue_y5",
+    "model"
+   ],
+   "shown": "$52.9M",
+   "unit": "cents"
+  },
+  "D7": {
+   "key": [
+    "D",
+    "brightrow",
+    "ebitda_y5",
+    "model"
+   ],
+   "shown": "$9.6M",
+   "unit": "cents"
+  },
+  "D8": {
+   "key": [
+    "D",
+    "brightrow",
+    "revenue_cagr",
+    "model"
+   ],
+   "shown": "9.9%",
+   "unit": "ratio"
+  },
+  "D9": {
+   "key": [
+    "D",
+    "brightrow",
+    "margin_y5",
+    "model"
+   ],
+   "shown": "18.3%",
+   "unit": "ratio"
+  },
+  "D10": {
+   "key": [
+    "D",
+    "brightrow",
+    "ev_exit",
+    "model"
+   ],
+   "shown": "$77.2M",
+   "unit": "cents"
+  },
+  "D11": {
+   "key": [
+    "D",
+    "brightrow",
+    "nd_exit",
+    "model"
+   ],
+   "shown": "$3.4M",
+   "unit": "cents"
+  },
+  "D12": {
+   "key": [
+    "D",
+    "brightrow",
+    "equity_exit",
+    "model"
+   ],
+   "shown": "$73.8M",
+   "unit": "cents"
+  },
+  "D13": {
+   "key": [
+    "D",
+    "brightrow",
+    "moic",
+    "model"
+   ],
+   "shown": "2.6x",
+   "unit": "multiple"
+  },
+  "D14": {
+   "key": [
+    "D",
+    "brightrow",
+    "irr",
+    "model"
+   ],
+   "shown": "20.9%",
+   "unit": "ratio"
+  },
+  "D15": {
+   "key": [
+    "D",
+    "brightrow",
+    "debt_paid",
+    "model"
+   ],
+   "shown": "$11.6M",
+   "unit": "cents"
+  },
+  "D16": {
+   "key": [
+    "D",
+    "brightrow",
+    "coverage_y1",
+    "model"
+   ],
+   "shown": "3.2x",
+   "unit": "multiple"
+  },
+  "D17": {
+   "key": [
+    "D",
+    "brightrow",
+    "net_leverage_y1",
+    "model"
+   ],
+   "shown": "3.0x",
+   "unit": "multiple"
+  },
+  "D18": {
+   "key": [
+    "D",
+    "brightrow",
+    "net_leverage_y5",
+    "model"
+   ],
+   "shown": "0.4x",
+   "unit": "multiple"
+  },
+  "D19": {
+   "key": [
+    "D",
+    "brightrow",
+    "min_headroom",
+    "model"
+   ],
+   "shown": "1.5x",
+   "unit": "multiple"
+  },
+  "D20": {
+   "key": [
+    "D",
+    "brightrow",
+    "grid_moic_00",
+    "model"
+   ],
+   "shown": "2.9x",
+   "unit": "multiple"
+  },
+  "D21": {
+   "key": [
+    "D",
+    "brightrow",
+    "grid_moic_04",
+    "model"
+   ],
+   "shown": "3.7x",
+   "unit": "multiple"
+  },
+  "D22": {
+   "key": [
+    "D",
+    "brightrow",
+    "grid_moic_40",
+    "model"
+   ],
+   "shown": "1.8x",
+   "unit": "multiple"
+  },
+  "D23": {
+   "key": [
+    "D",
+    "brightrow",
+    "grid_irr_40",
+    "model"
+   ],
+   "shown": "13.0%",
+   "unit": "ratio"
+  },
+  "D24": {
+   "key": [
+    "D",
+    "brightrow",
+    "grid_irr_04",
+    "model"
+   ],
+   "shown": "30.2%",
+   "unit": "ratio"
+  },
+  "F1": {
+   "key": [
+    "F",
+    "brightrow/deal",
+    "term:entry_multiple_x10",
+    "terms"
+   ],
+   "shown": "8.0x",
+   "unit": "multiple_x10"
+  },
+  "F2": {
+   "key": [
+    "F",
+    "brightrow/deal",
+    "term:exit_multiple_x10",
+    "terms"
+   ],
+   "shown": "8.0x",
+   "unit": "multiple_x10"
+  },
+  "F3": {
+   "key": [
+    "F",
+    "brightrow/deal",
+    "term:leverage_x10",
+    "terms"
+   ],
+   "shown": "3.5x",
+   "unit": "multiple_x10"
+  },
+  "F4": {
+   "key": [
+    "F",
+    "brightrow/deal",
+    "term:rate_bp",
+    "terms"
+   ],
+   "shown": "9.5%",
+   "unit": "bp"
+  },
+  "D25": {
+   "key": [
+    "D",
+    "brightrow/deal",
+    "growth_pm",
+    "assumption"
+   ],
+   "shown": "9.0%",
+   "unit": "ratio"
+  },
+  "D26": {
+   "key": [
+    "D",
+    "brightrow/deal",
+    "growth_cr",
+    "assumption"
+   ],
+   "shown": "7.0%",
+   "unit": "ratio"
+  },
+  "D27": {
+   "key": [
+    "D",
+    "brightrow/deal",
+    "growth_mc",
+    "assumption"
+   ],
+   "shown": "12.0%",
+   "unit": "ratio"
+  },
+  "D28": {
+   "key": [
+    "D",
+    "brightrow/deal",
+    "growth_ms",
+    "assumption"
+   ],
+   "shown": "18.0%",
+   "unit": "ratio"
+  },
+  "D29": {
+   "key": [
+    "D",
+    "brightrow/deal",
+    "gross_margin",
+    "assumption"
+   ],
+   "shown": "46.0%",
+   "unit": "ratio"
+  },
+  "D30": {
+   "key": [
+    "D",
+    "brightrow/deal",
+    "sga_pct",
+    "assumption"
+   ],
+   "shown": "25.5%",
+   "unit": "ratio"
+  },
+  "D31": {
+   "key": [
+    "D",
+    "brightrow/deal",
+    "da_pct",
+    "assumption"
+   ],
+   "shown": "2.1%",
+   "unit": "ratio"
+  },
+  "D32": {
+   "key": [
+    "D",
+    "brightrow/deal",
+    "capex_pct",
+    "assumption"
+   ],
+   "shown": "2.3%",
+   "unit": "ratio"
+  },
+  "D33": {
+   "key": [
+    "D",
+    "brightrow/deal",
+    "nwc_pct",
+    "assumption"
+   ],
+   "shown": "9.0%",
+   "unit": "ratio"
+  },
+  "D34": {
+   "key": [
+    "D",
+    "brightrow",
+    "reported_ebitda",
+    "FY2026"
+   ],
+   "shown": "$5.6M",
+   "unit": "cents"
+  },
+  "D35": {
+   "key": [
+    "D",
+    "brightrow",
+    "sga:allocation",
+    "FY2026"
+   ],
+   "shown": "$1.5M",
+   "unit": "cents"
+  },
+  "D36": {
+   "key": [
+    "D",
+    "brightrow",
+    "standalone_year",
+    "per year"
+   ],
+   "shown": "$1.0M",
+   "unit": "cents"
+  },
+  "D37": {
+   "key": [
+    "D",
+    "brightrow",
+    "settlement",
+    "FY2025"
+   ],
+   "shown": "$412K",
+   "unit": "cents"
+  },
+  "D38": {
+   "key": [
+    "D",
+    "brightrow",
+    "adjusted_ebitda",
+    "FY2026"
+   ],
+   "shown": "$6.1M",
+   "unit": "cents"
+  },
+  "D39": {
+   "key": [
+    "D",
+    "brightrow",
+    "reported_margin",
+    "FY2026"
+   ],
+   "shown": "17.0%",
+   "unit": "ratio"
+  },
+  "D40": {
+   "key": [
+    "D",
+    "brightrow",
+    "adjusted_margin",
+    "FY2026"
+   ],
+   "shown": "18.4%",
+   "unit": "ratio"
+  },
+  "D41": {
+   "key": [
+    "D",
+    "brightrow",
+    "seller_basis_margin",
+    "FY2026"
+   ],
+   "shown": "21.5%",
+   "unit": "ratio"
+  },
+  "D42": {
+   "key": [
+    "D",
+    "brightrow",
+    "total_revenue",
+    "FY2024"
+   ],
+   "shown": "$26.7M",
+   "unit": "cents"
+  },
+  "D43": {
+   "key": [
+    "D",
+    "brightrow",
+    "total_revenue",
+    "FY2025"
+   ],
+   "shown": "$29.8M",
+   "unit": "cents"
+  },
+  "D44": {
+   "key": [
+    "D",
+    "brightrow",
+    "total_revenue",
+    "FY2026"
+   ],
+   "shown": "$33.0M",
+   "unit": "cents"
+  },
+  "D45": {
+   "key": [
+    "D",
+    "brightrow",
+    "gross_margin",
+    "FY2026"
+   ],
+   "shown": "46.6%",
+   "unit": "ratio"
+  },
+  "D46": {
+   "key": [
+    "D",
+    "brightrow",
+    "revenue:pm",
+    "FY2026"
+   ],
+   "shown": "$16.0M",
+   "unit": "cents"
+  },
+  "D47": {
+   "key": [
+    "D",
+    "brightrow",
+    "restated:cr",
+    "FY2026"
+   ],
+   "shown": "$9.6M",
+   "unit": "cents"
+  },
+  "D48": {
+   "key": [
+    "D",
+    "brightrow",
+    "restated:mc",
+    "FY2026"
+   ],
+   "shown": "$4.1M",
+   "unit": "cents"
+  },
+  "D49": {
+   "key": [
+    "D",
+    "brightrow",
+    "revenue:ms",
+    "FY2026"
+   ],
+   "shown": "$3.3M",
+   "unit": "cents"
+  },
+  "D50": {
+   "key": [
+    "D",
+    "brightrow",
+    "growth:pm",
+    "FY2026"
+   ],
+   "shown": "9.6%",
+   "unit": "ratio"
+  },
+  "D51": {
+   "key": [
+    "D",
+    "brightrow",
+    "growth:cr",
+    "FY2026"
+   ],
+   "shown": "7.9%",
+   "unit": "ratio"
+  },
+  "D52": {
+   "key": [
+    "D",
+    "brightrow",
+    "growth:mc",
+    "FY2026"
+   ],
+   "shown": "13.9%",
+   "unit": "ratio"
+  },
+  "D53": {
+   "key": [
+    "D",
+    "brightrow",
+    "growth:ms",
+    "FY2026"
+   ],
+   "shown": "22.2%",
+   "unit": "ratio"
+  },
+  "D54": {
+   "key": [
+    "D",
+    "brightrow",
+    "largest_customer",
+    "FY2026"
+   ],
+   "shown": "$4.2M",
+   "unit": "cents"
+  },
+  "D55": {
+   "key": [
+    "D",
+    "brightrow",
+    "largest_share",
+    "FY2026"
+   ],
+   "shown": "12.7%",
+   "unit": "ratio"
+  },
+  "D56": {
+   "key": [
+    "D",
+    "brightrow",
+    "top10_share",
+    "FY2026"
+   ],
+   "shown": "58.8%",
+   "unit": "ratio"
+  },
+  "F5": {
+   "key": [
+    "F",
+    "brightrow",
+    "mw_under_contract",
+    "2026-09"
+   ],
+   "shown": "1,414 MW",
+   "unit": "mw"
+  },
+  "F6": {
+   "key": [
+    "F",
+    "brightrow",
+    "mw_under_contract",
+    "2023-10"
+   ],
+   "shown": "1,037 MW",
+   "unit": "mw"
+  },
+  "F7": {
+   "key": [
+    "F",
+    "brightrow",
+    "technicians",
+    "2026-09"
+   ],
+   "shown": "151",
+   "unit": "count"
+  },
+  "F8": {
+   "key": [
+    "F",
+    "brightrow",
+    "avg_response_hours",
+    "2026-09"
+   ],
+   "shown": "6.2 hours",
+   "unit": "hours_tenths"
+  },
+  "D57": {
+   "key": [
+    "D",
+    "brightrow",
+    "renewal_rate",
+    "FY2026"
+   ],
+   "shown": "93.8%",
+   "unit": "ratio"
+  },
+  "C1": {
+   "key": [
+    "C",
+    "teaser",
+    "renewal_rate",
+    "line 13"
+   ],
+   "shown": "supported",
+   "unit": "claim"
+  },
+  "C2": {
+   "key": [
+    "C",
+    "teaser",
+    "ebitda_margin",
+    "line 14"
+   ],
+   "shown": "contradicted",
+   "unit": "claim"
+  },
+  "C3": {
+   "key": [
+    "C",
+    "teaser",
+    "customer_concentration",
+    "line 15"
+   ],
+   "shown": "contradicted",
+   "unit": "claim"
+  }
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "raw": "{\"sections\": [{\"id\": \"recommendation\", \"paragraphs\": [\"We recommend that the committee approve pursuit of Brightrow Field Services into the next round on the conditions listed at the end of this memo. The base case values the business at {D1} at an entry multiple of {F1} on adjusted EBITDA of {D38} and returns a MOIC of {D13} and an IRR of {D14} over five years.\", \"The case rests on adjusted EBITDA that is lower than the seller presents. It also rests on a customer base that is more concentrated than the teaser claims. Our support depends on a quality of earnings review that confirms the standalone cost and on contract diligence for the largest customers.\"]}, {\"id\": \"business\", \"paragraphs\": [\"Brightrow provides operations and maintenance services for commercial solar assets through preventive maintenance contracts, corrective repairs, module cleaning, and monitoring subscriptions. In September 2026 the business had {F5} under contract and {F7} field technicians, with an average response time of {F8}. The seller describes its customers as commercial owners, community solar funds, and school districts in Texas and Oklahoma. We have not yet verified that mix.\", \"Today the business sits inside a larger electrical contractor that charges it an overhead allocation of {D35} a year. The separation removes that charge and replaces it with standalone corporate functions estimated at {D36} a year. The input does not cover the cost of building those functions or the terms of any transition services from the parent.\"]}, {\"id\": \"why_now\", \"paragraphs\": [\"The parent is selling a business that sits outside its core contracting work, and the first round of bids is expected in early 2027. A separation of this kind requires a buyer that can stand up corporate functions. That requirement may limit the field of bidders.\", \"Brightrow grew contracted capacity from {F6} in October 2023 to {F5} in September 2026 and renewed {D57} of its contracts in FY2026. These figures point to a growing installed base that needs ongoing service. The data does not show the pipeline of new contracts or the pace of new solar installations in the region.\"]}, {\"id\": \"historicals\", \"paragraphs\": [\"Revenue rose from {D42} in FY2024 to {D43} in FY2025 and {D44} in FY2026. Gross margin was {D45} in FY2026, but the input does not give gross or EBITDA margins for the earlier years. We cannot yet say how margins have moved over the period.\", \"Preventive maintenance contracts are the largest line at {D46} in FY2026 and grew {D50}. Corrective repairs contributed {D47} with growth of {D51}. Module cleaning reached {D48} with growth of {D52} and monitoring subscriptions reached {D49} with growth of {D53}. The segment figures are restated and we need the basis for that restatement before relying on them.\"]}, {\"id\": \"adjustments\", \"paragraphs\": [\"Reported EBITDA for FY2026 was {D34} at a margin of {D39}. We add back the parent overhead allocation of {D35} and deduct the standalone corporate cost of {D36} that replaces it. That gives adjusted EBITDA of {D38} at a margin of {D40}.\", \"The seller's margin of {D41} adds back the allocation without any standalone cost. We do not accept that basis because the business will carry its own corporate functions once it is separated. The standalone cost estimate is the most sensitive item in the bridge and needs independent support.\", \"The legal settlement of {D37} falls in FY2025 and does not enter the FY2026 bridge. It would matter only if the committee looks at a multiyear average. Diligence should confirm that no similar matters are pending.\"]}, {\"id\": \"customers\", \"paragraphs\": [\"The largest customer generated {D54} in FY2026 and accounted for {D55} of revenue. The ten largest customers together accounted for {D56}. This is more concentrated than the seller describes.\", \"The loss of the largest customer would cut revenue by {D55} and would test leverage in the early years of the hold. The input does not show contract terms, renewal dates, or change of control provisions for these customers, and we need them before a second round bid.\"]}, {\"id\": \"projections\", \"paragraphs\": [\"The base case takes revenue to {D6} in FY2031 at annual growth of {D8} and EBITDA to {D7} at a margin of {D9}. That margin is close to the FY2026 adjusted margin of {D40} and the case does not depend on margin expansion.\", \"Growth by line is set at {D25} for preventive maintenance, {D26} for corrective repairs, {D27} for module cleaning, and {D28} for monitoring subscriptions. Each rate is lower than the FY2026 growth for that line and so builds in some slowing from recent performance.\", \"Gross margin is held at {D29} against {D45} in FY2026. SG&A is set at {D30} of revenue before the standalone corporate cost, and depreciation and amortization runs at {D31} of revenue. Capital spending is {D32} of revenue and net working capital is {D33} of revenue.\"]}, {\"id\": \"returns\", \"paragraphs\": [\"At close the deal funds an enterprise value of {D1} and fees of {D2} with senior debt of {D3} and equity of {D4}. At an exit multiple of {F2} the FY2031 enterprise value is {D10} and the equity is worth {D12} after net debt of {D11}. That yields a MOIC of {D13} and an IRR of {D14}.\", \"Paying the highest entry multiple in the grid and exiting at the lowest gives a MOIC of {D22} and an IRR of {D23}. The lowest entry with the highest exit gives {D21} and an IRR of {D24}. The lowest entry with the lowest exit still gives {D20}. Entry price therefore carries much of the return and the grid argues for discipline in the bid.\"]}, {\"id\": \"debt\", \"paragraphs\": [\"Senior debt at close is {D3} on a term loan priced at {F4}. That sets net leverage at {D5} against a sizing target of {F3} of adjusted EBITDA. Interest coverage in FY2027 is {D16}.\", \"Net leverage falls to {D17} in FY2027 and {D18} in FY2031 as the business repays {D15} over five years. The smallest headroom to the illustrative leverage covenant is {D19}. The covenants are illustrative and we do not yet have lender terms.\"]}, {\"id\": \"risks\", \"paragraphs\": [\"The teaser's claim of recurring contracted revenue with renewal rates above its stated threshold is supported {C:1}, and the FY2026 renewal rate was {D57}.\", \"The claim of EBITDA margins above the teaser's threshold is contradicted {C:2}. Reported margin was {D39} and adjusted margin was {D40}. Only the seller's basis of {D41} clears the threshold because it adds back the parent allocation without any standalone cost.\", \"The claim that no single customer passes the teaser's threshold is contradicted {C:3}. The largest customer accounted for {D55} of FY2026 revenue and the ten largest accounted for {D56}. We have not verified the customer types or the Texas and Oklahoma footprint that the teaser describes.\", \"Other risks include the cost and timing of separation, the terms of transition services, and whether the parent refers work to Brightrow that would stop after the sale. Diligence should test the standalone cost, the restated segment figures, labor costs for the technician base, and the margin history before FY2026.\"]}, {\"id\": \"next_steps\", \"paragraphs\": [\"The deal team will request data room access to contracts with the ten largest customers, the parent allocation method, and the basis for the restated segment figures. The deal team will also engage an accounting adviser for a quality of earnings review focused on the standalone cost and the margin history.\", \"The deal team will open early talks with lenders to test the debt package and covenant terms. It will return to the committee with an updated model and a proposed bid range ahead of first round bids in early 2027.\"]}], \"conditions\": [\"A quality of earnings review confirms adjusted EBITDA of {D38} with a supported standalone corporate cost near {D36}.\", \"Contract review of the largest customer and the ten largest finds no change of control rights or near term expiries that put revenue at risk at close.\", \"The bid stays at or near the entry multiple of {F1} because much of the return depends on entry price.\", \"Separation costs and transition services from the parent are scoped and priced before the second round.\"]}",
+   "parsed": {
+    "sections": [
+     {
+      "id": "recommendation",
+      "paragraphs": [
+       "We recommend that the committee approve pursuit of Brightrow Field Services into the next round on the conditions listed at the end of this memo. The base case values the business at {D1} at an entry multiple of {F1} on adjusted EBITDA of {D38} and returns a MOIC of {D13} and an IRR of {D14} over five years.",
+       "The case rests on adjusted EBITDA that is lower than the seller presents. It also rests on a customer base that is more concentrated than the teaser claims. Our support depends on a quality of earnings review that confirms the standalone cost and on contract diligence for the largest customers."
+      ]
+     },
+     {
+      "id": "business",
+      "paragraphs": [
+       "Brightrow provides operations and maintenance services for commercial solar assets through preventive maintenance contracts, corrective repairs, module cleaning, and monitoring subscriptions. In September 2026 the business had {F5} under contract and {F7} field technicians, with an average response time of {F8}. The seller describes its customers as commercial owners, community solar funds, and school districts in Texas and Oklahoma. We have not yet verified that mix.",
+       "Today the business sits inside a larger electrical contractor that charges it an overhead allocation of {D35} a year. The separation removes that charge and replaces it with standalone corporate functions estimated at {D36} a year. The input does not cover the cost of building those functions or the terms of any transition services from the parent."
+      ]
+     },
+     {
+      "id": "why_now",
+      "paragraphs": [
+       "The parent is selling a business that sits outside its core contracting work, and the first round of bids is expected in early 2027. A separation of this kind requires a buyer that can stand up corporate functions. That requirement may limit the field of bidders.",
+       "Brightrow grew contracted capacity from {F6} in October 2023 to {F5} in September 2026 and renewed {D57} of its contracts in FY2026. These figures point to a growing installed base that needs ongoing service. The data does not show the pipeline of new contracts or the pace of new solar installations in the region."
+      ]
+     },
+     {
+      "id": "historicals",
+      "paragraphs": [
+       "Revenue rose from {D42} in FY2024 to {D43} in FY2025 and {D44} in FY2026. Gross margin was {D45} in FY2026, but the input does not give gross or EBITDA margins for the earlier years. We cannot yet say how margins have moved over the period.",
+       "Preventive maintenance contracts are the largest line at {D46} in FY2026 and grew {D50}. Corrective repairs contributed {D47} with growth of {D51}. Module cleaning reached {D48} with growth of {D52} and monitoring subscriptions reached {D49} with growth of {D53}. The segment figures are restated and we need the basis for that restatement before relying on them."
+      ]
+     },
+     {
+      "id": "adjustments",
+      "paragraphs": [
+       "Reported EBITDA for FY2026 was {D34} at a margin of {D39}. We add back the parent overhead allocation of {D35} and deduct the standalone corporate cost of {D36} that replaces it. That gives adjusted EBITDA of {D38} at a margin of {D40}.",
+       "The seller's margin of {D41} adds back the allocation without any standalone cost. We do not accept that basis because the business will carry its own corporate functions once it is separated. The standalone cost estimate is the most sensitive item in the bridge and needs independent support.",
+       "The legal settlement of {D37} falls in FY2025 and does not enter the FY2026 bridge. It would matter only if the committee looks at a multiyear average. Diligence should confirm that no similar matters are pending."
+      ]
+     },
+     {
+      "id": "customers",
+      "paragraphs": [
+       "The largest customer generated {D54} in FY2026 and accounted for {D55} of revenue. The ten largest customers together accounted for {D56}. This is more concentrated than the seller describes.",
+       "The loss of the largest customer would cut revenue by {D55} and would test leverage in the early years of the hold. The input does not show contract terms, renewal dates, or change of control provisions for these customers, and we need them before a second round bid."
+      ]
+     },
+     {
+      "id": "projections",
+      "paragraphs": [
+       "The base case takes revenue to {D6} in FY2031 at annual growth of {D8} and EBITDA to {D7} at a margin of {D9}. That margin is close to the FY2026 adjusted margin of {D40} and the case does not depend on margin expansion.",
+       "Growth by line is set at {D25} for preventive maintenance, {D26} for corrective repairs, {D27} for module cleaning, and {D28} for monitoring subscriptions. Each rate is lower than the FY2026 growth for that line and so builds in some slowing from recent performance.",
+       "Gross margin is held at {D29} against {D45} in FY2026. SG&A is set at {D30} of revenue before the standalone corporate cost, and depreciation and amortization runs at {D31} of revenue. Capital spending is {D32} of revenue and net working capital is {D33} of revenue."
+      ]
+     },
+     {
+      "id": "returns",
+      "paragraphs": [
+       "At close the deal funds an enterprise value of {D1} and fees of {D2} with senior debt of {D3} and equity of {D4}. At an exit multiple of {F2} the FY2031 enterprise value is {D10} and the equity is worth {D12} after net debt of {D11}. That yields a MOIC of {D13} and an IRR of {D14}.",
+       "Paying the highest entry multiple in the grid and exiting at the lowest gives a MOIC of {D22} and an IRR of {D23}. The lowest entry with the highest exit gives {D21} and an IRR of {D24}. The lowest entry with the lowest exit still gives {D20}. Entry price therefore carries much of the return and the grid argues for discipline in the bid."
+      ]
+     },
+     {
+      "id": "debt",
+      "paragraphs": [
+       "Senior debt at close is {D3} on a term loan priced at {F4}. That sets net leverage at {D5} against a sizing target of {F3} of adjusted EBITDA. Interest coverage in FY2027 is {D16}.",
+       "Net leverage falls to {D17} in FY2027 and {D18} in FY2031 as the business repays {D15} over five years. The smallest headroom to the illustrative leverage covenant is {D19}. The covenants are illustrative and we do not yet have lender terms."
+      ]
+     },
+     {
+      "id": "risks",
+      "paragraphs": [
+       "The teaser's claim of recurring contracted revenue with renewal rates above its stated threshold is supported {C:1}, and the FY2026 renewal rate was {D57}.",
+       "The claim of EBITDA margins above the teaser's threshold is contradicted {C:2}. Reported margin was {D39} and adjusted margin was {D40}. Only the seller's basis of {D41} clears the threshold because it adds back the parent allocation without any standalone cost.",
+       "The claim that no single customer passes the teaser's threshold is contradicted {C:3}. The largest customer accounted for {D55} of FY2026 revenue and the ten largest accounted for {D56}. We have not verified the customer types or the Texas and Oklahoma footprint that the teaser describes.",
+       "Other risks include the cost and timing of separation, the terms of transition services, and whether the parent refers work to Brightrow that would stop after the sale. Diligence should test the standalone cost, the restated segment figures, labor costs for the technician base, and the margin history before FY2026."
+      ]
+     },
+     {
+      "id": "next_steps",
+      "paragraphs": [
+       "The deal team will request data room access to contracts with the ten largest customers, the parent allocation method, and the basis for the restated segment figures. The deal team will also engage an accounting adviser for a quality of earnings review focused on the standalone cost and the margin history.",
+       "The deal team will open early talks with lenders to test the debt package and covenant terms. It will return to the committee with an updated model and a proposed bid range ahead of first round bids in early 2027."
+      ]
+     }
+    ],
+    "conditions": [
+     "A quality of earnings review confirms adjusted EBITDA of {D38} with a supported standalone corporate cost near {D36}.",
+     "Contract review of the largest customer and the ten largest finds no change of control rights or near term expiries that put revenue at risk at close.",
+     "The bid stays at or near the entry multiple of {F1} because much of the return depends on entry price.",
+     "Separation costs and transition services from the parent are scoped and priced before the second round."
+    ]
+   },
+   "problems": [],
+   "meta": {
+    "ms": 70766,
+    "api_ms": 70653,
+    "input_tokens": 2,
+    "output_tokens": 8030,
+    "cost_usd": 0.23642400000000002,
+    "models": [
+     "claude-opus-5-5"
+    ],
+    "answered_by": "opus",
+    "fell_back_from": []
+   }
+  }
+ ],
+ "final": {
+  "parsed": {
+   "sections": [
+    {
+     "id": "recommendation",
+     "paragraphs": [
+      "We recommend that the committee approve pursuit of Brightrow Field Services into the next round on the conditions listed at the end of this memo. The base case values the business at {D1} at an entry multiple of {F1} on adjusted EBITDA of {D38} and returns a MOIC of {D13} and an IRR of {D14} over five years.",
+      "The case rests on adjusted EBITDA that is lower than the seller presents. It also rests on a customer base that is more concentrated than the teaser claims. Our support depends on a quality of earnings review that confirms the standalone cost and on contract diligence for the largest customers."
+     ]
+    },
+    {
+     "id": "business",
+     "paragraphs": [
+      "Brightrow provides operations and maintenance services for commercial solar assets through preventive maintenance contracts, corrective repairs, module cleaning, and monitoring subscriptions. In September 2026 the business had {F5} under contract and {F7} field technicians, with an average response time of {F8}. The seller describes its customers as commercial owners, community solar funds, and school districts in Texas and Oklahoma. We have not yet verified that mix.",
+      "Today the business sits inside a larger electrical contractor that charges it an overhead allocation of {D35} a year. The separation removes that charge and replaces it with standalone corporate functions estimated at {D36} a year. The input does not cover the cost of building those functions or the terms of any transition services from the parent."
+     ]
+    },
+    {
+     "id": "why_now",
+     "paragraphs": [
+      "The parent is selling a business that sits outside its core contracting work, and the first round of bids is expected in early 2027. A separation of this kind requires a buyer that can stand up corporate functions. That requirement may limit the field of bidders.",
+      "Brightrow grew contracted capacity from {F6} in October 2023 to {F5} in September 2026 and renewed {D57} of its contracts in FY2026. These figures point to a growing installed base that needs ongoing service. The data does not show the pipeline of new contracts or the pace of new solar installations in the region."
+     ]
+    },
+    {
+     "id": "historicals",
+     "paragraphs": [
+      "Revenue rose from {D42} in FY2024 to {D43} in FY2025 and {D44} in FY2026. Gross margin was {D45} in FY2026, but the input does not give gross or EBITDA margins for the earlier years. We cannot yet say how margins have moved over the period.",
+      "Preventive maintenance contracts are the largest line at {D46} in FY2026 and grew {D50}. Corrective repairs contributed {D47} with growth of {D51}. Module cleaning reached {D48} with growth of {D52} and monitoring subscriptions reached {D49} with growth of {D53}. The segment figures are restated and we need the basis for that restatement before relying on them."
+     ]
+    },
+    {
+     "id": "adjustments",
+     "paragraphs": [
+      "Reported EBITDA for FY2026 was {D34} at a margin of {D39}. We add back the parent overhead allocation of {D35} and deduct the standalone corporate cost of {D36} that replaces it. That gives adjusted EBITDA of {D38} at a margin of {D40}.",
+      "The seller's margin of {D41} adds back the allocation without any standalone cost. We do not accept that basis because the business will carry its own corporate functions once it is separated. The standalone cost estimate is the most sensitive item in the bridge and needs independent support.",
+      "The legal settlement of {D37} falls in FY2025 and does not enter the FY2026 bridge. It would matter only if the committee looks at a multiyear average. Diligence should confirm that no similar matters are pending."
+     ]
+    },
+    {
+     "id": "customers",
+     "paragraphs": [
+      "The largest customer generated {D54} in FY2026 and accounted for {D55} of revenue. The ten largest customers together accounted for {D56}. This is more concentrated than the seller describes.",
+      "The loss of the largest customer would cut revenue by {D55} and would test leverage in the early years of the hold. The input does not show contract terms, renewal dates, or change of control provisions for these customers, and we need them before a second round bid."
+     ]
+    },
+    {
+     "id": "projections",
+     "paragraphs": [
+      "The base case takes revenue to {D6} in FY2031 at annual growth of {D8} and EBITDA to {D7} at a margin of {D9}. That margin is close to the FY2026 adjusted margin of {D40} and the case does not depend on margin expansion.",
+      "Growth by line is set at {D25} for preventive maintenance, {D26} for corrective repairs, {D27} for module cleaning, and {D28} for monitoring subscriptions. Each rate is lower than the FY2026 growth for that line and so builds in some slowing from recent performance.",
+      "Gross margin is held at {D29} against {D45} in FY2026. SG&A is set at {D30} of revenue before the standalone corporate cost, and depreciation and amortization runs at {D31} of revenue. Capital spending is {D32} of revenue and net working capital is {D33} of revenue."
+     ]
+    },
+    {
+     "id": "returns",
+     "paragraphs": [
+      "At close the deal funds an enterprise value of {D1} and fees of {D2} with senior debt of {D3} and equity of {D4}. At an exit multiple of {F2} the FY2031 enterprise value is {D10} and the equity is worth {D12} after net debt of {D11}. That yields a MOIC of {D13} and an IRR of {D14}.",
+      "Paying the highest entry multiple in the grid and exiting at the lowest gives a MOIC of {D22} and an IRR of {D23}. The lowest entry with the highest exit gives {D21} and an IRR of {D24}. The lowest entry with the lowest exit still gives {D20}. Entry price therefore carries much of the return and the grid argues for discipline in the bid."
+     ]
+    },
+    {
+     "id": "debt",
+     "paragraphs": [
+      "Senior debt at close is {D3} on a term loan priced at {F4}. That sets net leverage at {D5} against a sizing target of {F3} of adjusted EBITDA. Interest coverage in FY2027 is {D16}.",
+      "Net leverage falls to {D17} in FY2027 and {D18} in FY2031 as the business repays {D15} over five years. The smallest headroom to the illustrative leverage covenant is {D19}. The covenants are illustrative and we do not yet have lender terms."
+     ]
+    },
+    {
+     "id": "risks",
+     "paragraphs": [
+      "The teaser's claim of recurring contracted revenue with renewal rates above its stated threshold is supported {C:1}, and the FY2026 renewal rate was {D57}.",
+      "The claim of EBITDA margins above the teaser's threshold is contradicted {C:2}. Reported margin was {D39} and adjusted margin was {D40}. Only the seller's basis of {D41} clears the threshold because it adds back the parent allocation without any standalone cost.",
+      "The claim that no single customer passes the teaser's threshold is contradicted {C:3}. The largest customer accounted for {D55} of FY2026 revenue and the ten largest accounted for {D56}. We have not verified the customer types or the Texas and Oklahoma footprint that the teaser describes.",
+      "Other risks include the cost and timing of separation, the terms of transition services, and whether the parent refers work to Brightrow that would stop after the sale. Diligence should test the standalone cost, the restated segment figures, labor costs for the technician base, and the margin history before FY2026."
+     ]
+    },
+    {
+     "id": "next_steps",
+     "paragraphs": [
+      "The deal team will request data room access to contracts with the ten largest customers, the parent allocation method, and the basis for the restated segment figures. The deal team will also engage an accounting adviser for a quality of earnings review focused on the standalone cost and the margin history.",
+      "The deal team will open early talks with lenders to test the debt package and covenant terms. It will return to the committee with an updated model and a proposed bid range ahead of first round bids in early 2027."
+     ]
+    }
+   ],
+   "conditions": [
+    "A quality of earnings review confirms adjusted EBITDA of {D38} with a supported standalone corporate cost near {D36}.",
+    "Contract review of the largest customer and the ten largest finds no change of control rights or near term expiries that put revenue at risk at close.",
+    "The bid stays at or near the entry multiple of {F1} because much of the return depends on entry price.",
+    "Separation costs and transition services from the parent are scoped and priced before the second round."
+   ]
+  },
+  "valid": true,
+  "problems": []
+ },
+ "model": "claude-opus-5-5",
+ "cli": {
+  "backend": "claude-cli",
+  "model": "opus",
+  "flags": [
+   "--model",
+   "--output-format",
+   "--system-prompt",
+   "--tools",
+   "--disallowedTools",
+   "--strict-mcp-config",
+   "--no-session-persistence"
+  ],
+  "tools_off": "--tools",
+  "route": [
+   "opus",
+   "haiku",
+   "gemini-3.8-flash",
+   "gemini-3.1-pro-preview",
+   "gpt-6-astra",
+   "sonnet"
+  ]
+ },
+ "backend": "claude-cli",
+ "recorded_at": "2026-10-28T23:53:16+00:00",
+ "seconds": 71.7
+}

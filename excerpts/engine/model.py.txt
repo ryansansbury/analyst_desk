@@ -1,0 +1,81 @@
+# An excerpt of engine/model.py, copied for the code view on this page. The view reads only this copy.
+
+"""The deal model for Brightrow Field Services in Python: five years of projections, the debt schedule, returns and
+the sensitivity grid.
+
+Each step runs in the same order as the workbook's formula for it, so the two agree to the cent. Year 0 is FY2026,
+the last twelve months, from the data room through the ledger. Interest runs on each year's opening balance, so
+nothing is circular. Cash builds after the sweep and offsets debt in net debt. There are no interim distributions,
+so IRR is exactly MOIC to the one-fifth less one, and the workbook checks that too.
+"""
+YEARS = 5
+
+# ...
+
+def compute(base, a, t):
+    """base: FY2026 in dollars (rev_pm..rev_ms, gross_profit, sga_ex, standalone, adjusted_ebitda).
+    a: the operating assumptions as fractions. t: the deal terms as multiples and fractions."""
+    r = {"rev": {line: [base[f"rev_{line}"]] for line in LINES}}
+    for y in range(1, YEARS + 1):
+        for line in LINES:
+            r["rev"][line].append(r["rev"][line][y - 1] * (1 + a[f"growth_{line}"]))
+    rev = r["rev"]
+    r["revenue"] = [rev["pm"][y] + rev["cr"][y] + rev["mc"][y] + rev["ms"][y] for y in range(YEARS + 1)]
+    R = r["revenue"]
+    r["gross_profit"] = [base["gross_profit"]] + [R[y] * a["gross_margin"] for y in range(1, YEARS + 1)]
+    r["sga"] = [base["sga_ex"]] + [R[y] * a["sga_pct"] for y in range(1, YEARS + 1)]
+    standalone = [base["standalone"]]
+    for _ in range(YEARS):
+        standalone.append(standalone[-1] * (1 + t["escalation"]))
+    r["standalone"] = standalone
+    r["ebitda"] = [base["adjusted_ebitda"]] + [r["gross_profit"][y] - r["sga"][y] - standalone[y]
+                                                for y in range(1, YEARS + 1)]
+    E = r["ebitda"]
+    r["margin"] = [E[y] / R[y] for y in range(YEARS + 1)]
+    r["da"] = [None] + [R[y] * a["da_pct"] for y in range(1, YEARS + 1)]
+    r["ebit"] = [None] + [E[y] - r["da"][y] for y in range(1, YEARS + 1)]
+    r["capex"] = [None] + [R[y] * a["capex_pct"] for y in range(1, YEARS + 1)]
+    r["nwc"] = [R[y] * a["nwc_pct"] for y in range(YEARS + 1)]
+    r["dnwc"] = [None] + [r["nwc"][y] - r["nwc"][y - 1] for y in range(1, YEARS + 1)]
+
+    debt0 = E[0] * t["leverage"]
+    keys = ("opening", "interest", "taxes", "cfads", "mandatory", "avail", "sweep", "closing", "cash", "net_debt",
+            "net_leverage", "coverage", "lev_headroom", "cov_headroom")
+    for k in keys:
+        r[k] = [None]
+    r["closing"][0], r["cash"][0] = debt0, 0.0
+    r["net_debt"][0] = debt0
+    r["net_leverage"][0] = debt0 / E[0]
+    for y in range(1, YEARS + 1):
+        op = r["closing"][y - 1]
+        it = op * t["rate"]
+        tx = max(0.0, (r["ebit"][y] - it) * t["tax"])
+        cf = E[y] - tx - r["capex"][y] - r["dnwc"][y]
+        md = min(op, t["amortization"] * debt0)
+        av = cf - it - md
+        sw = max(0.0, min(op - md, t["sweep"] * av))
+        cl = op - md - sw
+        ca = r["cash"][y - 1] + av - sw
+        nd = cl - ca
+        for k, v in (("opening", op), ("interest", it), ("taxes", tx), ("cfads", cf), ("mandatory", md), ("avail", av),
+                     ("sweep", sw), ("closing", cl), ("cash", ca), ("net_debt", nd)):
+            r[k].append(v)
+        r["net_leverage"].append(nd / E[y])
+        r["coverage"].append(E[y] / it if it > 0 else None)
+        r["lev_headroom"].append(t["covenant_leverage"][y - 1] - nd / E[y])
+        r["cov_headroom"].append(E[y] / it - t["covenant_coverage"] if it > 0 else None)
+
+    ev = E[0] * t["entry"]
+    fees = ev * t["fees"]
+    uses = ev + fees
+    equity0 = uses - debt0
+    ev_exit = E[YEARS] * t["exit"]
+    nd_exit = r["net_debt"][YEARS]
+    equity_exit = ev_exit - nd_exit
+    moic = equity_exit / equity0
+    r.update(debt0=debt0, ev=ev, fees=fees, uses=uses, equity0=equity0, ev_exit=ev_exit, nd_exit=nd_exit,
+             equity_exit=equity_exit, moic=moic, irr=moic ** (1 / 5) - 1,
+             flows=[-equity0, 0.0, 0.0, 0.0, 0.0, equity_exit])
+    r["grid_moic"] = [[(E[YEARS] * x - nd_exit) / (e * E[0] * (1 + t["fees"]) - debt0) for x in GRID] for e in GRID]
+    r["grid_irr"] = [[m ** (1 / 5) - 1 for m in row] for row in r["grid_moic"]]
+    return r

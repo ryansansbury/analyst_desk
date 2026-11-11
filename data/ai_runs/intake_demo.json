@@ -1,0 +1,538 @@
+{
+ "task_id": "intake_demo",
+ "task": "intake_mapper",
+ "prompt": {
+  "id": "intake_mapper",
+  "version": "1",
+  "sha256": "ad0089c987267830d066f8fea5051c315f4e45ef048079c5b850f26127860638",
+  "system": "You map the columns of a trucking company's TMS export to a fixed schema so the file can be loaded into a fund's ledger. The export's layout has changed and no parser recognizes it yet. Code checks your mapping before anyone uses it. It parses every row with your mapping, then checks the dates against the business day, the miles and dollar amounts against each other, the load IDs for duplicates, the totals row against the rows above it, and the revenue total against the invoicing system's batch. A wrong mapping fails those checks and the file is held, so map only what the rows support.\n\nThe input gives you the first two rows of the sheet, the next ten rows, the last two rows, the schema with each field's meaning, and the layout the parser already knows as an example.\n\nWhat to return:\n- header_rows: 2 when the first row holds group labels above the column names, and 1 when the first row is the column names.\n- columns: every column of the header row, in order, as [column name exactly as written, schema field]. Use null for a column the schema doesn't need. Each schema field appears exactly once.\n- date_format: the Python strptime format that parses the date column, like %Y-%m-%d. Test it against every sample row. A day above 12 tells a day-first date from a month-first one.\n- money_format: text for currency text like $1,234.56, plain for bare numbers, and paren for numbers with negatives in parentheses.\n- on_time: the exact cell values that mean on time and late, as strings. Read the column's name with care, because a column that asks whether a load was late turns the values around.\n- totals_label: the label of a totals row at the bottom exactly as written, or null when the last rows are loads.\n- confidence: a number from 0 to 1 for each schema field.\n- notes: one sentence on anything you were unsure of.\n\nSome columns look like a schema field and aren't, such as an index, a rate per mile, or a total that adds other columns together. Map those to null. A credit row has zero miles and a negative charge, and it's still data.\n\nReply with exactly one JSON object and nothing else."
+ },
+ "input": {
+  "task": "intake_mapper",
+  "file": "kiskadee_tms_2026-11-04.xlsx",
+  "top_rows": [
+   [
+    "Load ID",
+    "Pickup Date",
+    "Customer",
+    "Origin-Destination",
+    "Line Haul Revenue",
+    "Fuel Surcharge",
+    "Accessorial Charges",
+    "Carrier Pay",
+    "Loaded Miles",
+    "Deadhead Miles",
+    "On Time",
+    "Trailer Type"
+   ],
+   [
+    "BB431703",
+    "2026-11-03",
+    "Waco Warehouse Supply",
+    "NOL-HOU",
+    "$984.87",
+    "$169.44",
+    "$0.00",
+    "",
+    "353",
+    "58",
+    "Y",
+    "48' Flatbed"
+   ]
+  ],
+  "sample_rows": [
+   [
+    "BB431704",
+    "2026-11-03",
+    "Pecan Valley Foods",
+    "SAT-HOU",
+    "$549.12",
+    "$94.08",
+    "$0.00",
+    "",
+    "192",
+    "32",
+    "Y",
+    "48' Flatbed"
+   ],
+   [
+    "BB431705",
+    "2026-11-03",
+    "Hill Country Home Goods",
+    "DAL-SHV",
+    "$492.78",
+    "$110.78",
+    "$100.00",
+    "$513.07",
+    "191",
+    "0",
+    "Y",
+    "53' Dry Van"
+   ],
+   [
+    "BB431706",
+    "2026-11-03",
+    "Mustang Auto Parts",
+    "FTW-ELP",
+    "$1,808.65",
+    "$302.43",
+    "$100.00",
+    "$1,839.64",
+    "593",
+    "0",
+    "Y",
+    "48' Flatbed"
+   ],
+   [
+    "BB431707",
+    "2026-11-03",
+    "Blue Mesa Appliances",
+    "SAT-LRD",
+    "$365.67",
+    "$68.85",
+    "$0.00",
+    "$380.99",
+    "153",
+    "0",
+    "Y",
+    "48' Flatbed"
+   ],
+   [
+    "BB431708",
+    "2026-11-03",
+    "Llano Stone Works",
+    "HOU-BPT",
+    "$259.72",
+    "$40.42",
+    "$0.00",
+    "",
+    "86",
+    "18",
+    "Y",
+    "53' Dry Van"
+   ],
+   [
+    "BB431709",
+    "2026-11-03",
+    "Lone Oak Building Supply",
+    "FTW-ELP",
+    "$1,297.17",
+    "$316.68",
+    "$0.00",
+    "",
+    "609",
+    "71",
+    "Y",
+    "53' Reefer"
+   ],
+   [
+    "BB431710",
+    "2026-11-03",
+    "Pedregal Packaging",
+    "HOU-DAL",
+    "$617.45",
+    "$116.50",
+    "$0.00",
+    "$608.86",
+    "233",
+    "0",
+    "N",
+    "48' Flatbed"
+   ],
+   [
+    "BB431711",
+    "2026-11-03",
+    "Rio Bravo Produce",
+    "DAL-SHV",
+    "$565.36",
+    "$93.59",
+    "$0.00",
+    "$544.76",
+    "191",
+    "0",
+    "Y",
+    "48' Flatbed"
+   ],
+   [
+    "BB431712",
+    "2026-11-03",
+    "Bluestem Beverage",
+    "HOU-SAT",
+    "$600.99",
+    "$92.46",
+    "$0.00",
+    "$589.53",
+    "201",
+    "0",
+    "Y",
+    "53' Dry Van"
+   ],
+   [
+    "BB431713",
+    "2026-11-03",
+    "Hill Country Home Goods",
+    "HOU-BPT",
+    "$175.96",
+    "$36.52",
+    "$0.00",
+    "",
+    "83",
+    "15",
+    "Y",
+    "53' Dry Van"
+   ]
+  ],
+  "last_rows": [
+   [
+    "BB431824",
+    "2026-11-03",
+    "Red River Plastics",
+    "DAL-HOU",
+    "$645.41",
+    "$116.50",
+    "$75.00",
+    "$641.19",
+    "233",
+    "0",
+    "Y",
+    "48' Flatbed"
+   ],
+   [
+    "Grand Total",
+    "",
+    "",
+    "",
+    "$77,499.27",
+    "$15,058.74",
+    "$2,510.00",
+    "$31,040.57",
+    "29906",
+    "2537",
+    "",
+    ""
+   ]
+  ],
+  "row_count": 125,
+  "schema": [
+   {
+    "field": "load_id",
+    "kind": "text",
+    "meaning": "the load's unique ID"
+   },
+   {
+    "field": "date",
+    "kind": "date",
+    "meaning": "the day the load shipped or was picked up"
+   },
+   {
+    "field": "customer",
+    "kind": "text",
+    "meaning": "the customer billed for the load"
+   },
+   {
+    "field": "lane",
+    "kind": "text",
+    "meaning": "origin and destination"
+   },
+   {
+    "field": "miles",
+    "kind": "whole number",
+    "meaning": "loaded miles"
+   },
+   {
+    "field": "empty_miles",
+    "kind": "whole number",
+    "meaning": "empty or deadhead miles driven to reach the load"
+   },
+   {
+    "field": "linehaul_rev",
+    "kind": "money",
+    "meaning": "linehaul revenue for the load"
+   },
+   {
+    "field": "fuel_surcharge",
+    "kind": "money",
+    "meaning": "fuel surcharge revenue for the load"
+   },
+   {
+    "field": "accessorials",
+    "kind": "money",
+    "meaning": "accessorial charges like detention or lumper fees, negative on a credit row"
+   },
+   {
+    "field": "carrier_cost",
+    "kind": "money",
+    "meaning": "what was paid to an outside carrier on a brokered load, blank on the company's own trucks"
+   },
+   {
+    "field": "on_time",
+    "kind": "yes or no",
+    "meaning": "whether the load was delivered on time"
+   }
+  ],
+  "known_layout_example": {
+   "header_rows": 2,
+   "columns": [
+    [
+     "Load #",
+     "load_id"
+    ],
+    [
+     "Ship Date",
+     "date"
+    ],
+    [
+     "Customer",
+     "customer"
+    ],
+    [
+     "Lane",
+     "lane"
+    ],
+    [
+     "Loaded Miles",
+     "miles"
+    ],
+    [
+     "Empty Miles",
+     "empty_miles"
+    ],
+    [
+     "Linehaul Rev",
+     "linehaul_rev"
+    ],
+    [
+     "Fuel Surcharge",
+     "fuel_surcharge"
+    ],
+    [
+     "Accessorials",
+     "accessorials"
+    ],
+    [
+     "Carrier Cost",
+     "carrier_cost"
+    ],
+    [
+     "On Time",
+     "on_time"
+    ]
+   ],
+   "date_format": "%m/%d/%Y",
+   "money_format": "text",
+   "on_time": {
+    "true": "Y",
+    "false": "N"
+   },
+   "totals_label": "TOTAL"
+  },
+  "formats": {
+   "date_format": "a Python strptime format string, like %m/%d/%Y",
+   "money_format": {
+    "text": "currency text like $1,234.56 and -$250.00",
+    "plain": "plain numbers like 1234.56 and -250",
+    "paren": "text like 1,234.56 with negatives in parentheses (250.00)"
+   }
+  }
+ },
+ "input_sha256": "d4fa7985b2e06c867f346c1140faaba8eacf4ef17dcae0ec0fc2a531b3be4fd5",
+ "ids": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "raw": "{\"header_rows\":1,\"columns\":[[\"Load ID\",\"load_id\"],[\"Pickup Date\",\"date\"],[\"Customer\",\"customer\"],[\"Origin-Destination\",\"lane\"],[\"Line Haul Revenue\",\"linehaul_rev\"],[\"Fuel Surcharge\",\"fuel_surcharge\"],[\"Accessorial Charges\",\"accessorials\"],[\"Carrier Pay\",\"carrier_cost\"],[\"Loaded Miles\",\"miles\"],[\"Deadhead Miles\",\"empty_miles\"],[\"On Time\",\"on_time\"],[\"Trailer Type\",null]],\"date_format\":\"%Y-%m-%d\",\"money_format\":\"text\",\"on_time\":{\"true\":\"Y\",\"false\":\"N\"},\"totals_label\":\"Grand Total\",\"confidence\":{\"load_id\":0.99,\"date\":0.97,\"customer\":0.97,\"lane\":0.96,\"miles\":0.95,\"empty_miles\":0.95,\"linehaul_rev\":0.95,\"fuel_surcharge\":0.93,\"accessorials\":0.92,\"carrier_cost\":0.9,\"on_time\":0.95},\"notes\":\"Trailer Type is mapped to null because the schema has no field for it, carrier pay is blank on the company's own trucks as expected, and the pickup dates (2026-11-03) fall after today's date of 2026-10-29, which I could not check against the business calendar.\"}",
+   "parsed": {
+    "header_rows": 1,
+    "columns": [
+     [
+      "Load ID",
+      "load_id"
+     ],
+     [
+      "Pickup Date",
+      "date"
+     ],
+     [
+      "Customer",
+      "customer"
+     ],
+     [
+      "Origin-Destination",
+      "lane"
+     ],
+     [
+      "Line Haul Revenue",
+      "linehaul_rev"
+     ],
+     [
+      "Fuel Surcharge",
+      "fuel_surcharge"
+     ],
+     [
+      "Accessorial Charges",
+      "accessorials"
+     ],
+     [
+      "Carrier Pay",
+      "carrier_cost"
+     ],
+     [
+      "Loaded Miles",
+      "miles"
+     ],
+     [
+      "Deadhead Miles",
+      "empty_miles"
+     ],
+     [
+      "On Time",
+      "on_time"
+     ],
+     [
+      "Trailer Type",
+      null
+     ]
+    ],
+    "date_format": "%Y-%m-%d",
+    "money_format": "text",
+    "on_time": {
+     "true": "Y",
+     "false": "N"
+    },
+    "totals_label": "Grand Total",
+    "confidence": {
+     "load_id": 0.99,
+     "date": 0.97,
+     "customer": 0.97,
+     "lane": 0.96,
+     "miles": 0.95,
+     "empty_miles": 0.95,
+     "linehaul_rev": 0.95,
+     "fuel_surcharge": 0.93,
+     "accessorials": 0.92,
+     "carrier_cost": 0.9,
+     "on_time": 0.95
+    },
+    "notes": "Trailer Type is mapped to null because the schema has no field for it, carrier pay is blank on the company's own trucks as expected, and the pickup dates (2026-11-03) fall after today's date of 2026-10-29, which I could not check against the business calendar."
+   },
+   "problems": [],
+   "meta": {
+    "ms": 8439,
+    "api_ms": 8289,
+    "input_tokens": 2,
+    "output_tokens": 1906,
+    "cost_usd": 0.0017678899999999998,
+    "models": [
+     "claude-haiku-5-5"
+    ],
+    "answered_by": "haiku",
+    "fell_back_from": []
+   }
+  }
+ ],
+ "final": {
+  "parsed": {
+   "header_rows": 1,
+   "columns": [
+    [
+     "Load ID",
+     "load_id"
+    ],
+    [
+     "Pickup Date",
+     "date"
+    ],
+    [
+     "Customer",
+     "customer"
+    ],
+    [
+     "Origin-Destination",
+     "lane"
+    ],
+    [
+     "Line Haul Revenue",
+     "linehaul_rev"
+    ],
+    [
+     "Fuel Surcharge",
+     "fuel_surcharge"
+    ],
+    [
+     "Accessorial Charges",
+     "accessorials"
+    ],
+    [
+     "Carrier Pay",
+     "carrier_cost"
+    ],
+    [
+     "Loaded Miles",
+     "miles"
+    ],
+    [
+     "Deadhead Miles",
+     "empty_miles"
+    ],
+    [
+     "On Time",
+     "on_time"
+    ],
+    [
+     "Trailer Type",
+     null
+    ]
+   ],
+   "date_format": "%Y-%m-%d",
+   "money_format": "text",
+   "on_time": {
+    "true": "Y",
+    "false": "N"
+   },
+   "totals_label": "Grand Total",
+   "confidence": {
+    "load_id": 0.99,
+    "date": 0.97,
+    "customer": 0.97,
+    "lane": 0.96,
+    "miles": 0.95,
+    "empty_miles": 0.95,
+    "linehaul_rev": 0.95,
+    "fuel_surcharge": 0.93,
+    "accessorials": 0.92,
+    "carrier_cost": 0.9,
+    "on_time": 0.95
+   },
+   "notes": "Trailer Type is mapped to null because the schema has no field for it, carrier pay is blank on the company's own trucks as expected, and the pickup dates (2026-11-03) fall after today's date of 2026-10-29, which I could not check against the business calendar."
+  },
+  "valid": true,
+  "problems": []
+ },
+ "model": "claude-haiku-5-5",
+ "cli": {
+  "backend": "claude-cli",
+  "model": "haiku",
+  "flags": [
+   "--model",
+   "--output-format",
+   "--system-prompt",
+   "--tools",
+   "--disallowedTools",
+   "--strict-mcp-config",
+   "--no-session-persistence"
+  ],
+  "tools_off": "--tools",
+  "route": [
+   "haiku",
+   "gemini-3.1-pro-preview"
+  ]
+ },
+ "backend": "claude-cli",
+ "recorded_at": "2026-10-30T01:44:35+00:00",
+ "seconds": 9.9,
+ "intake": {
+  "accepted": true,
+  "reasons": [],
+  "exact_match": true
+ }
+}

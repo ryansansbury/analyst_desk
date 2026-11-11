@@ -1,0 +1,542 @@
+{
+ "runs": [
+  {
+   "version": 1,
+   "frozen": "2026-10-27T11:20",
+   "detectors_sha256": "9961315e247c5b6292acf66668490b02e176265b573770a4d71bf71747e51847",
+   "detector_files": [
+    "engine/checks.py",
+    "engine/intake.py",
+    "engine/pipeline.py"
+   ],
+   "catalog_sha256": "30196ba63dcbf77abac431228dd0df5d591b59238d4dc0a18a0364b5dfe47cd8",
+   "held_out_seeds": [
+    7301,
+    8402,
+    9503
+   ],
+   "developed_on": [
+    2026,
+    11
+   ],
+   "total": {
+    "planted": 18,
+    "caught": 18,
+    "diagnosed": 18,
+    "false_alarms": 0,
+    "lookalikes_left_alone": 9,
+    "lookalikes": 9
+   },
+   "seeds": [
+    {
+     "seed": 7301,
+     "planted": 6,
+     "caught": 6,
+     "diagnosed": 6,
+     "false_alarms": 0,
+     "false_alarm_list": [],
+     "info_notes": 0,
+     "lookalikes": {
+      "L1": {
+       "left_alone": true,
+       "checks": 179
+      },
+      "L2": {
+       "left_alone": true,
+       "days": 3
+      },
+      "L3": {
+       "left_alone": true
+      }
+     },
+     "lookalikes_left_alone": 3,
+     "errors": {
+      "E1": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "sideoats:settlement_tie",
+        "sideoats:unit_range"
+       ],
+       "quarantined": false
+      },
+      "E2": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total",
+        "kiskadee:key_unique"
+       ],
+       "quarantined": true
+      },
+      "E3": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total",
+        "kiskadee:dates",
+        "kiskadee:key_unique",
+        "kiskadee:sum_of_parts"
+       ],
+       "quarantined": true
+      },
+      "E4": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "sideoats:continuity"
+       ],
+       "quarantined": false
+      },
+      "E5": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "possumhaw:internal_consistency"
+       ],
+       "quarantined": false
+      },
+      "E6": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total"
+       ],
+       "quarantined": true
+      }
+     }
+    },
+    {
+     "seed": 8402,
+     "planted": 6,
+     "caught": 6,
+     "diagnosed": 6,
+     "false_alarms": 0,
+     "false_alarm_list": [],
+     "info_notes": 0,
+     "lookalikes": {
+      "L1": {
+       "left_alone": true,
+       "checks": 179
+      },
+      "L2": {
+       "left_alone": true,
+       "days": 2
+      },
+      "L3": {
+       "left_alone": true
+      }
+     },
+     "lookalikes_left_alone": 3,
+     "errors": {
+      "E1": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "sideoats:settlement_tie",
+        "sideoats:unit_range"
+       ],
+       "quarantined": false
+      },
+      "E2": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total",
+        "kiskadee:key_unique"
+       ],
+       "quarantined": true
+      },
+      "E3": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total",
+        "kiskadee:dates",
+        "kiskadee:key_unique",
+        "kiskadee:sum_of_parts"
+       ],
+       "quarantined": true
+      },
+      "E4": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "sideoats:continuity"
+       ],
+       "quarantined": false
+      },
+      "E5": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "possumhaw:internal_consistency"
+       ],
+       "quarantined": false
+      },
+      "E6": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total"
+       ],
+       "quarantined": true
+      }
+     }
+    },
+    {
+     "seed": 9503,
+     "planted": 6,
+     "caught": 6,
+     "diagnosed": 6,
+     "false_alarms": 0,
+     "false_alarm_list": [],
+     "info_notes": 0,
+     "lookalikes": {
+      "L1": {
+       "left_alone": true,
+       "checks": 179
+      },
+      "L2": {
+       "left_alone": true,
+       "days": 3
+      },
+      "L3": {
+       "left_alone": true
+      }
+     },
+     "lookalikes_left_alone": 3,
+     "errors": {
+      "E1": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "sideoats:settlement_tie",
+        "sideoats:unit_range"
+       ],
+       "quarantined": false
+      },
+      "E2": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total",
+        "kiskadee:key_unique"
+       ],
+       "quarantined": true
+      },
+      "E3": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total",
+        "kiskadee:dates",
+        "kiskadee:key_unique",
+        "kiskadee:sum_of_parts"
+       ],
+       "quarantined": true
+      },
+      "E4": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "sideoats:continuity"
+       ],
+       "quarantined": false
+      },
+      "E5": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "possumhaw:internal_consistency"
+       ],
+       "quarantined": false
+      },
+      "E6": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total"
+       ],
+       "quarantined": true
+      }
+     }
+    }
+   ],
+   "notes": "first freeze, written on seeds 2026 and 11 only"
+  },
+  {
+   "version": 2,
+   "frozen": "2026-10-27T13:03",
+   "detectors_sha256": "25882c2c88d21aba4b1290702d69ef43b5bc7a55fa1823a5495c961270e7b512",
+   "detector_files": [
+    "engine/checks.py",
+    "engine/intake.py",
+    "engine/pipeline.py"
+   ],
+   "catalog_sha256": "30196ba63dcbf77abac431228dd0df5d591b59238d4dc0a18a0364b5dfe47cd8",
+   "held_out_seeds": [
+    3119,
+    6427,
+    8831
+   ],
+   "developed_on": [
+    2026,
+    11
+   ],
+   "total": {
+    "planted": 18,
+    "caught": 18,
+    "diagnosed": 18,
+    "false_alarms": 0,
+    "lookalikes_left_alone": 9,
+    "lookalikes": 9
+   },
+   "seeds": [
+    {
+     "seed": 3119,
+     "planted": 6,
+     "caught": 6,
+     "diagnosed": 6,
+     "false_alarms": 0,
+     "false_alarm_list": [],
+     "info_notes": 0,
+     "lookalikes": {
+      "L1": {
+       "left_alone": true,
+       "checks": 179
+      },
+      "L2": {
+       "left_alone": true,
+       "days": 2
+      },
+      "L3": {
+       "left_alone": true
+      }
+     },
+     "lookalikes_left_alone": 3,
+     "errors": {
+      "E1": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "sideoats:settlement_tie",
+        "sideoats:unit_range"
+       ],
+       "quarantined": false
+      },
+      "E2": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total",
+        "kiskadee:key_unique"
+       ],
+       "quarantined": true
+      },
+      "E3": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total",
+        "kiskadee:dates",
+        "kiskadee:key_unique",
+        "kiskadee:sum_of_parts"
+       ],
+       "quarantined": true
+      },
+      "E4": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "sideoats:continuity"
+       ],
+       "quarantined": false
+      },
+      "E5": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "possumhaw:internal_consistency"
+       ],
+       "quarantined": false
+      },
+      "E6": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total"
+       ],
+       "quarantined": true
+      }
+     }
+    },
+    {
+     "seed": 6427,
+     "planted": 6,
+     "caught": 6,
+     "diagnosed": 6,
+     "false_alarms": 0,
+     "false_alarm_list": [],
+     "info_notes": 0,
+     "lookalikes": {
+      "L1": {
+       "left_alone": true,
+       "checks": 179
+      },
+      "L2": {
+       "left_alone": true,
+       "days": 3
+      },
+      "L3": {
+       "left_alone": true
+      }
+     },
+     "lookalikes_left_alone": 3,
+     "errors": {
+      "E1": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "sideoats:settlement_tie",
+        "sideoats:unit_range"
+       ],
+       "quarantined": false
+      },
+      "E2": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total",
+        "kiskadee:key_unique"
+       ],
+       "quarantined": true
+      },
+      "E3": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total",
+        "kiskadee:dates",
+        "kiskadee:key_unique",
+        "kiskadee:sum_of_parts"
+       ],
+       "quarantined": true
+      },
+      "E4": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "sideoats:continuity"
+       ],
+       "quarantined": false
+      },
+      "E5": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "possumhaw:internal_consistency"
+       ],
+       "quarantined": false
+      },
+      "E6": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total"
+       ],
+       "quarantined": true
+      }
+     }
+    },
+    {
+     "seed": 8831,
+     "planted": 6,
+     "caught": 6,
+     "diagnosed": 6,
+     "false_alarms": 0,
+     "false_alarm_list": [],
+     "info_notes": 0,
+     "lookalikes": {
+      "L1": {
+       "left_alone": true,
+       "checks": 179
+      },
+      "L2": {
+       "left_alone": true,
+       "days": 3
+      },
+      "L3": {
+       "left_alone": true
+      }
+     },
+     "lookalikes_left_alone": 3,
+     "errors": {
+      "E1": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "sideoats:settlement_tie",
+        "sideoats:unit_range"
+       ],
+       "quarantined": false
+      },
+      "E2": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total",
+        "kiskadee:key_unique"
+       ],
+       "quarantined": true
+      },
+      "E3": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total",
+        "kiskadee:dates",
+        "kiskadee:key_unique",
+        "kiskadee:sum_of_parts"
+       ],
+       "quarantined": true
+      },
+      "E4": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "sideoats:continuity"
+       ],
+       "quarantined": false
+      },
+      "E5": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "possumhaw:internal_consistency"
+       ],
+       "quarantined": false
+      },
+      "E6": {
+       "caught": true,
+       "diagnosed": true,
+       "flags": [
+        "kiskadee:control_total"
+       ],
+       "quarantined": true
+      }
+     }
+    }
+   ],
+   "notes": "Version 2, scored because the deal work changed the detector files after version 1, including the data room's working-capital parser in engine/intake.py. Scored once on fresh seeds."
+  }
+ ],
+ "renames": [
+  {
+   "at": "2026-11-06",
+   "run_version": 2,
+   "detectors_sha256": "fb9e06eb19029d3b603f402885715e699a0dffbe259bcea5031bc987a07c0ee0",
+   "note": "The company names in the detector files changed on 11/6 by a one-to-one swap of words, after a check found real companies with some of the old names. Detection didn't change, so this run's score stands."
+  }
+ ]
+}

@@ -1,0 +1,36 @@
+# An excerpt of agents/replay.py, copied for the code view on this page. The view reads only this copy.
+
+"""Load the recorded agent runs and check each one still holds against today's ledger.
+
+A run is replayed only if its final output passes the same validation again: the schema, the limits, the gate and
+the writing rules. Its local IDs resolve by meaning, so the run is stale when a value it saw has changed since it
+was recorded, and the page says so. Nothing here calls a model.
+"""
+
+# ...
+
+def final(run):
+    f = (run or {}).get("final") or {}
+    return f.get("parsed") if f.get("valid") else None
+
+
+def intake_mapping(runs, task_id="intake_demo"):
+    """The engine mapping from a recorded intake run whose output passed its schema, or None. The pipeline still
+    validates it against the data before accepting it."""
+    out = final(runs.get(task_id))
+    if out is None or validate.intake_mapper(out, runs[task_id]["input"]):
+        return None
+    return validate.mapping_of(out)
+
+
+def check(run, ledger):
+    """{status: valid, stale or invalid, problems, mapping} for a prose task's recording against today's ledger."""
+    out = final(run)
+    if out is None:
+        return {"status": "invalid", "problems": ["the recording has no valid final output"], "mapping": {}}
+    mapping = validate.resolve(ledger, run.get("ids", {}))
+    stale = [local for local, item in run.get("ids", {}).items()
+             if mapping.get(local) is None or (item["key"][0] != "C" and _shown(ledger, mapping[local]) != item["shown"])]
+    problems = validate.validate(run["task"], out, run["input"], ledger, mapping)
+    status = "invalid" if problems else "stale" if stale else "valid"
+    return {"status": status, "problems": problems, "stale": stale, "mapping": mapping}

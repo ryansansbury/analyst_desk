@@ -1,0 +1,508 @@
+{
+ "task_id": "intake_V04",
+ "task": "intake_mapper",
+ "prompt": {
+  "id": "intake_mapper",
+  "version": "1",
+  "sha256": "ad0089c987267830d066f8fea5051c315f4e45ef048079c5b850f26127860638",
+  "system": "You map the columns of a trucking company's TMS export to a fixed schema so the file can be loaded into a fund's ledger. The export's layout has changed and no parser recognizes it yet. Code checks your mapping before anyone uses it. It parses every row with your mapping, then checks the dates against the business day, the miles and dollar amounts against each other, the load IDs for duplicates, the totals row against the rows above it, and the revenue total against the invoicing system's batch. A wrong mapping fails those checks and the file is held, so map only what the rows support.\n\nThe input gives you the first two rows of the sheet, the next ten rows, the last two rows, the schema with each field's meaning, and the layout the parser already knows as an example.\n\nWhat to return:\n- header_rows: 2 when the first row holds group labels above the column names, and 1 when the first row is the column names.\n- columns: every column of the header row, in order, as [column name exactly as written, schema field]. Use null for a column the schema doesn't need. Each schema field appears exactly once.\n- date_format: the Python strptime format that parses the date column, like %Y-%m-%d. Test it against every sample row. A day above 12 tells a day-first date from a month-first one.\n- money_format: text for currency text like $1,234.56, plain for bare numbers, and paren for numbers with negatives in parentheses.\n- on_time: the exact cell values that mean on time and late, as strings. Read the column's name with care, because a column that asks whether a load was late turns the values around.\n- totals_label: the label of a totals row at the bottom exactly as written, or null when the last rows are loads.\n- confidence: a number from 0 to 1 for each schema field.\n- notes: one sentence on anything you were unsure of.\n\nSome columns look like a schema field and aren't, such as an index, a rate per mile, or a total that adds other columns together. Map those to null. A credit row has zero miles and a negative charge, and it's still data.\n\nReply with exactly one JSON object and nothing else."
+ },
+ "input": {
+  "task": "intake_mapper",
+  "file": "V04_2026-10-09.xlsx",
+  "top_rows": [
+   [
+    "LOAD",
+    "",
+    "",
+    "",
+    "MILES",
+    "",
+    "REVENUE",
+    "",
+    "",
+    "COST",
+    "SERVICE"
+   ],
+   [
+    "Pro #",
+    "PU Date",
+    "Bill To",
+    "O/D",
+    "Billed Miles",
+    "Unloaded Miles",
+    "Base Rate",
+    "Fuel Adj",
+    "Extras",
+    "Buy Rate",
+    "Service Met"
+   ]
+  ],
+  "sample_rows": [
+   [
+    "BB428891",
+    "08-Oct-26",
+    "Pecan Valley Foods",
+    "SAT-HOU",
+    "195",
+    "0",
+    "471.90",
+    "111.15",
+    "0.00",
+    "482.11",
+    "FALSE"
+   ],
+   [
+    "BB428892",
+    "08-Oct-26",
+    "Brazos Bottling",
+    "DAL-OKC",
+    "202",
+    "32",
+    "634.28",
+    "109.08",
+    "0.00",
+    "",
+    "TRUE"
+   ],
+   [
+    "BB428893",
+    "08-Oct-26",
+    "Wichita Falls Wire",
+    "HOU-DAL",
+    "235",
+    "20",
+    "629.80",
+    "133.95",
+    "0.00",
+    "",
+    "TRUE"
+   ],
+   [
+    "BB428894",
+    "08-Oct-26",
+    "Comal Kitchen Brands",
+    "HOU-NOL",
+    "341",
+    "0",
+    "770.66",
+    "156.86",
+    "0.00",
+    "803.83",
+    "TRUE"
+   ],
+   [
+    "BB428895",
+    "08-Oct-26",
+    "Medina Mills",
+    "OKC-DAL",
+    "205",
+    "18",
+    "643.70",
+    "94.30",
+    "0.00",
+    "",
+    "TRUE"
+   ],
+   [
+    "BB428896",
+    "08-Oct-26",
+    "Lone Oak Building Supply",
+    "DAL-OKC",
+    "202",
+    "17",
+    "622.16",
+    "98.98",
+    "0.00",
+    "",
+    "TRUE"
+   ],
+   [
+    "BB428897",
+    "08-Oct-26",
+    "San Gabriel Glassworks",
+    "ELP-FTW",
+    "603",
+    "0",
+    "1,308.51",
+    "283.41",
+    "0.00",
+    "1,366.42",
+    "TRUE"
+   ],
+   [
+    "BB428898",
+    "08-Oct-26",
+    "Llano Stone Works",
+    "DAL-OKC",
+    "200",
+    "0",
+    "424.00",
+    "92.00",
+    "0.00",
+    "447.96",
+    "TRUE"
+   ],
+   [
+    "BB428899",
+    "08-Oct-26",
+    "Frio Farms",
+    "AUS-DAL",
+    "199",
+    "29",
+    "431.83",
+    "91.54",
+    "0.00",
+    "",
+    "TRUE"
+   ],
+   [
+    "BB428900",
+    "08-Oct-26",
+    "Lone Oak Building Supply",
+    "HOU-DAL",
+    "244",
+    "42",
+    "534.36",
+    "109.80",
+    "0.00",
+    "",
+    "TRUE"
+   ]
+  ],
+  "last_rows": [
+   [
+    "BB429026",
+    "08-Oct-26",
+    "Allthorn Tile",
+    "DAL-OKC",
+    "212",
+    "45",
+    "532.12",
+    "101.76",
+    "0.00",
+    "",
+    "TRUE"
+   ],
+   [
+    "TOTAL",
+    "",
+    "",
+    "",
+    "33753",
+    "2718",
+    "88,804.35",
+    "17,050.96",
+    "2,825.00",
+    "40,099.60",
+    ""
+   ]
+  ],
+  "row_count": 140,
+  "schema": [
+   {
+    "field": "load_id",
+    "kind": "text",
+    "meaning": "the load's unique ID"
+   },
+   {
+    "field": "date",
+    "kind": "date",
+    "meaning": "the day the load shipped or was picked up"
+   },
+   {
+    "field": "customer",
+    "kind": "text",
+    "meaning": "the customer billed for the load"
+   },
+   {
+    "field": "lane",
+    "kind": "text",
+    "meaning": "origin and destination"
+   },
+   {
+    "field": "miles",
+    "kind": "whole number",
+    "meaning": "loaded miles"
+   },
+   {
+    "field": "empty_miles",
+    "kind": "whole number",
+    "meaning": "empty or deadhead miles driven to reach the load"
+   },
+   {
+    "field": "linehaul_rev",
+    "kind": "money",
+    "meaning": "linehaul revenue for the load"
+   },
+   {
+    "field": "fuel_surcharge",
+    "kind": "money",
+    "meaning": "fuel surcharge revenue for the load"
+   },
+   {
+    "field": "accessorials",
+    "kind": "money",
+    "meaning": "accessorial charges like detention or lumper fees, negative on a credit row"
+   },
+   {
+    "field": "carrier_cost",
+    "kind": "money",
+    "meaning": "what was paid to an outside carrier on a brokered load, blank on the company's own trucks"
+   },
+   {
+    "field": "on_time",
+    "kind": "yes or no",
+    "meaning": "whether the load was delivered on time"
+   }
+  ],
+  "known_layout_example": {
+   "header_rows": 2,
+   "columns": [
+    [
+     "Load #",
+     "load_id"
+    ],
+    [
+     "Ship Date",
+     "date"
+    ],
+    [
+     "Customer",
+     "customer"
+    ],
+    [
+     "Lane",
+     "lane"
+    ],
+    [
+     "Loaded Miles",
+     "miles"
+    ],
+    [
+     "Empty Miles",
+     "empty_miles"
+    ],
+    [
+     "Linehaul Rev",
+     "linehaul_rev"
+    ],
+    [
+     "Fuel Surcharge",
+     "fuel_surcharge"
+    ],
+    [
+     "Accessorials",
+     "accessorials"
+    ],
+    [
+     "Carrier Cost",
+     "carrier_cost"
+    ],
+    [
+     "On Time",
+     "on_time"
+    ]
+   ],
+   "date_format": "%m/%d/%Y",
+   "money_format": "text",
+   "on_time": {
+    "true": "Y",
+    "false": "N"
+   },
+   "totals_label": "TOTAL"
+  },
+  "formats": {
+   "date_format": "a Python strptime format string, like %m/%d/%Y",
+   "money_format": {
+    "text": "currency text like $1,234.56 and -$250.00",
+    "plain": "plain numbers like 1234.56 and -250",
+    "paren": "text like 1,234.56 with negatives in parentheses (250.00)"
+   }
+  }
+ },
+ "input_sha256": "231b17702e2c14898ec6de16b16eae87b6d916e76e35db4c3652441a4bfb2ff4",
+ "ids": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "raw": "{\"header_rows\": 2, \"columns\": [[\"Pro #\", \"load_id\"], [\"PU Date\", \"date\"], [\"Bill To\", \"customer\"], [\"O/D\", \"lane\"], [\"Billed Miles\", \"miles\"], [\"Unloaded Miles\", \"empty_miles\"], [\"Base Rate\", \"linehaul_rev\"], [\"Fuel Adj\", \"fuel_surcharge\"], [\"Extras\", \"accessorials\"], [\"Buy Rate\", \"carrier_cost\"], [\"Service Met\", \"on_time\"]], \"date_format\": \"%d-%b-%y\", \"money_format\": \"plain\", \"on_time\": {\"true\": \"TRUE\", \"false\": \"FALSE\"}, \"totals_label\": \"TOTAL\", \"confidence\": {\"load_id\": 0.97, \"date\": 0.95, \"customer\": 0.95, \"lane\": 0.95, \"miles\": 0.8, \"empty_miles\": 0.9, \"linehaul_rev\": 0.85, \"fuel_surcharge\": 0.92, \"accessorials\": 0.85, \"carrier_cost\": 0.88, \"on_time\": 0.85}, \"notes\": \"I was least sure of three things: whether 'Billed Miles' means loaded miles, whether 'Base Rate' and 'Buy Rate' are load-level dollar amounts rather than per-mile rates (the values, such as 471.90 on 195 miles, support dollar amounts), and whether money values with thousands commas but no $ sign (like 1,308.51) count as plain, since no negative values appear in the sample rows to settle the format.\"}",
+   "parsed": {
+    "header_rows": 2,
+    "columns": [
+     [
+      "Pro #",
+      "load_id"
+     ],
+     [
+      "PU Date",
+      "date"
+     ],
+     [
+      "Bill To",
+      "customer"
+     ],
+     [
+      "O/D",
+      "lane"
+     ],
+     [
+      "Billed Miles",
+      "miles"
+     ],
+     [
+      "Unloaded Miles",
+      "empty_miles"
+     ],
+     [
+      "Base Rate",
+      "linehaul_rev"
+     ],
+     [
+      "Fuel Adj",
+      "fuel_surcharge"
+     ],
+     [
+      "Extras",
+      "accessorials"
+     ],
+     [
+      "Buy Rate",
+      "carrier_cost"
+     ],
+     [
+      "Service Met",
+      "on_time"
+     ]
+    ],
+    "date_format": "%d-%b-%y",
+    "money_format": "plain",
+    "on_time": {
+     "true": "TRUE",
+     "false": "FALSE"
+    },
+    "totals_label": "TOTAL",
+    "confidence": {
+     "load_id": 0.97,
+     "date": 0.95,
+     "customer": 0.95,
+     "lane": 0.95,
+     "miles": 0.8,
+     "empty_miles": 0.9,
+     "linehaul_rev": 0.85,
+     "fuel_surcharge": 0.92,
+     "accessorials": 0.85,
+     "carrier_cost": 0.88,
+     "on_time": 0.85
+    },
+    "notes": "I was least sure of three things: whether 'Billed Miles' means loaded miles, whether 'Base Rate' and 'Buy Rate' are load-level dollar amounts rather than per-mile rates (the values, such as 471.90 on 195 miles, support dollar amounts), and whether money values with thousands commas but no $ sign (like 1,308.51) count as plain, since no negative values appear in the sample rows to settle the format."
+   },
+   "problems": [],
+   "meta": {
+    "ms": 12163,
+    "api_ms": 12006,
+    "input_tokens": 2,
+    "output_tokens": 905,
+    "cost_usd": 0.0767482,
+    "models": [
+     "claude-opus-5-5"
+    ]
+   }
+  }
+ ],
+ "final": {
+  "parsed": {
+   "header_rows": 2,
+   "columns": [
+    [
+     "Pro #",
+     "load_id"
+    ],
+    [
+     "PU Date",
+     "date"
+    ],
+    [
+     "Bill To",
+     "customer"
+    ],
+    [
+     "O/D",
+     "lane"
+    ],
+    [
+     "Billed Miles",
+     "miles"
+    ],
+    [
+     "Unloaded Miles",
+     "empty_miles"
+    ],
+    [
+     "Base Rate",
+     "linehaul_rev"
+    ],
+    [
+     "Fuel Adj",
+     "fuel_surcharge"
+    ],
+    [
+     "Extras",
+     "accessorials"
+    ],
+    [
+     "Buy Rate",
+     "carrier_cost"
+    ],
+    [
+     "Service Met",
+     "on_time"
+    ]
+   ],
+   "date_format": "%d-%b-%y",
+   "money_format": "plain",
+   "on_time": {
+    "true": "TRUE",
+    "false": "FALSE"
+   },
+   "totals_label": "TOTAL",
+   "confidence": {
+    "load_id": 0.97,
+    "date": 0.95,
+    "customer": 0.95,
+    "lane": 0.95,
+    "miles": 0.8,
+    "empty_miles": 0.9,
+    "linehaul_rev": 0.85,
+    "fuel_surcharge": 0.92,
+    "accessorials": 0.85,
+    "carrier_cost": 0.88,
+    "on_time": 0.85
+   },
+   "notes": "I was least sure of three things: whether 'Billed Miles' means loaded miles, whether 'Base Rate' and 'Buy Rate' are load-level dollar amounts rather than per-mile rates (the values, such as 471.90 on 195 miles, support dollar amounts), and whether money values with thousands commas but no $ sign (like 1,308.51) count as plain, since no negative values appear in the sample rows to settle the format."
+  },
+  "valid": true,
+  "problems": []
+ },
+ "model": "claude-opus-5-5",
+ "cli": {
+  "model": "opus",
+  "flags": [
+   "--model",
+   "--output-format",
+   "--system-prompt",
+   "--tools",
+   "--disallowedTools",
+   "--strict-mcp-config",
+   "--no-session-persistence"
+  ],
+  "tools_off": "--tools"
+ },
+ "recorded_at": "2026-10-27T19:01:14+00:00",
+ "seconds": 13.4,
+ "intake": {
+  "accepted": true,
+  "reasons": [],
+  "exact_match": false
+ }
+}

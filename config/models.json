@@ -1,0 +1,21 @@
+{
+ "note": "The seven models the comparison ran on 10/28, each with the name the page shows and its list prices in US dollars per million input and output tokens. The routing chart, the costs and the agents' routes read this file. It holds no endpoint, no key and no way to call a model.",
+ "prices_checked": "2026-10-28",
+ "prices_note": "Checked 10/28 on each vendor's own pricing page, at the standard tier per million tokens. GPT-6 Astra and GPT-6 Luna replaced the deprecated GPT-5 and GPT-5 mini on 10/28. Gemini 3.1 Pro is preview pricing for prompts of 200,000 tokens or fewer. Gemini 3.8 Flash is an introductory price through 12/31/2026 that doubles on 1/1/2027. Claude ran through Claude Code, which reported its own cost, and those costs match Anthropic's list prices (Opus 5.5 at $4 in and $20 out, Sonnet 5.5 at $2 and $10, and Haiku 5.5 at $0.10 and $0.50). Every vendor bills reasoning as output.",
+ "default": "claude-opus",
+ "holds_note": "Validation checks the rules a reply must follow, not how well it reads. An agent listed in holds runs on that model whenever it clears the agent's bar, and the cheapest that cleared stays the rule for every other agent. Set 10/27 after reading every Claude model's commentary and memo side by side, and the board deck joined them 10/28 after all seven models' drafts were read. The cheapest model that passed wrote deck headlines that described each slide without saying what it meant.",
+ "holds": {"daily_commentary": "claude-opus", "board_deck": "claude-opus", "memo_writer": "claude-opus"},
+ "models": [
+  {"id": "claude-opus", "label": "Claude Opus 5.5", "vendor": "Anthropic", "via": "claude-cli", "model": "opus"},
+  {"id": "claude-sonnet", "label": "Claude Sonnet 5.5", "vendor": "Anthropic", "via": "claude-cli", "model": "sonnet"},
+  {"id": "claude-haiku", "label": "Claude Haiku 5.5", "vendor": "Anthropic", "via": "claude-cli", "model": "haiku"},
+  {"id": "openai-a", "label": "GPT-6 Astra", "vendor": "OpenAI", "via": "openai", "model": "gpt-6-astra",
+   "price_in": 10.0, "price_out": 50.0},
+  {"id": "openai-b", "label": "GPT-6 Luna", "vendor": "OpenAI", "via": "openai", "model": "gpt-6-luna",
+   "price_in": 0.1, "price_out": 0.5},
+  {"id": "google-a", "label": "Gemini 3.1 Pro", "vendor": "Google", "via": "openai", "model": "gemini-3.1-pro-preview",
+   "price_in": 2.0, "price_out": 12.0},
+  {"id": "google-b", "label": "Gemini 3.8 Flash", "vendor": "Google", "via": "openai", "model": "gemini-3.8-flash",
+   "price_in": 0.75, "price_out": 3.75}
+ ]
+}

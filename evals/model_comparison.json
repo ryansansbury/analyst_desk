@@ -1,0 +1,500 @@
+{
+ "note": "The summary of the model comparison run on 10/28, with every model on the same suite, prompts and validation. The routes and the chart on How it works read it.",
+ "ran_at": "2026-10-28T23:37:39+00:00",
+ "prices_checked": "2026-10-28",
+ "default": "claude-opus",
+ "models": [
+  {
+   "id": "claude-opus",
+   "label": "Claude Opus 5.5",
+   "vendor": "Anthropic",
+   "via": "claude-cli",
+   "model": "opus",
+   "answered_by": [
+    "claude-opus-5-5"
+   ],
+   "ran_at": "2026-10-28T04:52:16+00:00",
+   "tasks": {
+    "intake_mapper": {
+     "runs": 12,
+     "valid": 12,
+     "first_try": 12,
+     "errors": 0,
+     "seconds": 6.9,
+     "cost": 0.075134,
+     "tokens_in": 2,
+     "tokens_out": 734,
+     "exact": 10,
+     "same": 2,
+     "harmful": 0,
+     "caught": 0,
+     "accepted": 12
+    },
+    "daily_commentary": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 25.0,
+     "cost": 0.11078,
+     "tokens_in": 2,
+     "tokens_out": 2705
+    },
+    "deal_analyst": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 21.1,
+     "cost": 0.115136,
+     "tokens_in": 2,
+     "tokens_out": 2278
+    },
+    "board_deck": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 25.2,
+     "cost": 0.108628,
+     "tokens_in": 2,
+     "tokens_out": 2657
+    },
+    "memo_writer": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 92.1,
+     "cost": 0.286352,
+     "tokens_in": 2,
+     "tokens_out": 10526
+    }
+   },
+   "morning_cost": 0.696,
+   "morning_seconds": 170.3
+  },
+  {
+   "id": "claude-sonnet",
+   "label": "Claude Sonnet 5.5",
+   "vendor": "Anthropic",
+   "via": "claude-cli",
+   "model": "sonnet",
+   "answered_by": [
+    "claude-sonnet-5-5"
+   ],
+   "ran_at": "2026-10-28T04:54:13+00:00",
+   "tasks": {
+    "intake_mapper": {
+     "runs": 12,
+     "valid": 11,
+     "first_try": 11,
+     "errors": 0,
+     "seconds": 6.7,
+     "cost": 0.040978,
+     "tokens_in": 2,
+     "tokens_out": 824,
+     "exact": 9,
+     "same": 2,
+     "harmful": 0,
+     "caught": 1,
+     "accepted": 11
+    },
+    "daily_commentary": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 0,
+     "errors": 0,
+     "seconds": 23.8,
+     "cost": 0.090278,
+     "tokens_in": 4,
+     "tokens_out": 3565
+    },
+    "deal_analyst": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 14.9,
+     "cost": 0.05806,
+     "tokens_in": 2,
+     "tokens_out": 2326
+    },
+    "board_deck": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 19.8,
+     "cost": 0.057884,
+     "tokens_in": 2,
+     "tokens_out": 3012
+    },
+    "memo_writer": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 0,
+     "errors": 0,
+     "seconds": 214.6,
+     "cost": 0.400382,
+     "tokens_in": 4,
+     "tokens_out": 32710
+    }
+   },
+   "morning_cost": 0.6476,
+   "morning_seconds": 279.8
+  },
+  {
+   "id": "claude-haiku",
+   "label": "Claude Haiku 5.5",
+   "vendor": "Anthropic",
+   "via": "claude-cli",
+   "model": "haiku",
+   "answered_by": [
+    "claude-haiku-5-5"
+   ],
+   "ran_at": "2026-10-28T04:56:52+00:00",
+   "tasks": {
+    "intake_mapper": {
+     "runs": 12,
+     "valid": 12,
+     "first_try": 10,
+     "errors": 0,
+     "seconds": 11.9,
+     "cost": 0.003023,
+     "tokens_in": 2,
+     "tokens_out": 2524,
+     "exact": 12,
+     "same": 0,
+     "harmful": 0,
+     "caught": 0,
+     "accepted": 12
+    },
+    "daily_commentary": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 19.4,
+     "cost": 0.003848,
+     "tokens_in": 2,
+     "tokens_out": 4852
+    },
+    "deal_analyst": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 27.3,
+     "cost": 0.004935,
+     "tokens_in": 2,
+     "tokens_out": 6382
+    },
+    "board_deck": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 24.5,
+     "cost": 0.004238,
+     "tokens_in": 2,
+     "tokens_out": 5691
+    },
+    "memo_writer": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 0,
+     "errors": 0,
+     "seconds": 352.2,
+     "cost": 0.048747,
+     "tokens_in": 4,
+     "tokens_out": 90228
+    }
+   },
+   "morning_cost": 0.0648,
+   "morning_seconds": 435.3
+  },
+  {
+   "id": "openai-a",
+   "label": "GPT-6 Astra",
+   "vendor": "OpenAI",
+   "via": "openai",
+   "model": "gpt-6-astra",
+   "answered_by": [
+    "gpt-6-astra"
+   ],
+   "ran_at": "2026-10-28T23:37:21+00:00",
+   "tasks": {
+    "intake_mapper": {
+     "runs": 12,
+     "valid": 12,
+     "first_try": 11,
+     "errors": 0,
+     "seconds": 4.8,
+     "cost": 0.042859,
+     "tokens_in": 2407,
+     "tokens_out": 376,
+     "exact": 9,
+     "same": 3,
+     "harmful": 0,
+     "caught": 0,
+     "accepted": 12
+    },
+    "daily_commentary": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 13.4,
+     "cost": 0.05907,
+     "tokens_in": 1592,
+     "tokens_out": 863
+    },
+    "deal_analyst": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 13.7,
+     "cost": 0.07813,
+     "tokens_in": 2733,
+     "tokens_out": 1016
+    },
+    "board_deck": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 14.2,
+     "cost": 0.06474,
+     "tokens_in": 1464,
+     "tokens_out": 1002
+    },
+    "memo_writer": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 0,
+     "errors": 0,
+     "seconds": 82.4,
+     "cost": 0.30057,
+     "tokens_in": 6577,
+     "tokens_out": 4696
+    }
+   },
+   "morning_cost": 0.5454,
+   "morning_seconds": 128.5
+  },
+  {
+   "id": "openai-b",
+   "label": "GPT-6 Luna",
+   "vendor": "OpenAI",
+   "via": "openai",
+   "model": "gpt-6-luna",
+   "answered_by": [
+    "gpt-6-luna"
+   ],
+   "ran_at": "2026-10-28T23:37:39+00:00",
+   "tasks": {
+    "intake_mapper": {
+     "runs": 12,
+     "valid": 12,
+     "first_try": 12,
+     "errors": 0,
+     "seconds": 6.5,
+     "cost": 0.000548,
+     "tokens_in": 2223,
+     "tokens_out": 652,
+     "exact": 9,
+     "same": 3,
+     "harmful": 0,
+     "caught": 0,
+     "accepted": 12
+    },
+    "daily_commentary": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 12.6,
+     "cost": 0.000836,
+     "tokens_in": 1592,
+     "tokens_out": 1354
+    },
+    "deal_analyst": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 18.5,
+     "cost": 0.001294,
+     "tokens_in": 2733,
+     "tokens_out": 2041
+    },
+    "board_deck": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 27.5,
+     "cost": 0.001569,
+     "tokens_in": 1464,
+     "tokens_out": 2846
+    },
+    "memo_writer": {
+     "runs": 1,
+     "valid": 0,
+     "first_try": 0,
+     "errors": 0,
+     "seconds": 72.0,
+     "cost": 0.00432,
+     "tokens_in": 7420,
+     "tokens_out": 7156
+    }
+   },
+   "morning_cost": 0.0086,
+   "morning_seconds": 137.1
+  },
+  {
+   "id": "google-a",
+   "label": "Gemini 3.1 Pro",
+   "vendor": "Google",
+   "via": "openai",
+   "model": "gemini-3.1-pro-preview",
+   "answered_by": [
+    "gemini-3.1-pro-preview"
+   ],
+   "ran_at": "2026-10-28T22:50:25+00:00",
+   "tasks": {
+    "intake_mapper": {
+     "runs": 12,
+     "valid": 12,
+     "first_try": 12,
+     "errors": 0,
+     "seconds": 13.3,
+     "cost": 0.029766,
+     "tokens_in": 2871,
+     "tokens_out": 2002,
+     "exact": 12,
+     "same": 0,
+     "harmful": 0,
+     "caught": 0,
+     "accepted": 12
+    },
+    "daily_commentary": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 37.3,
+     "cost": 0.087576,
+     "tokens_in": 1848,
+     "tokens_out": 6990
+    },
+    "deal_analyst": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 40.6,
+     "cost": 0.097066,
+     "tokens_in": 3257,
+     "tokens_out": 7546
+    },
+    "board_deck": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 32.8,
+     "cost": 0.077748,
+     "tokens_in": 1710,
+     "tokens_out": 6194
+    },
+    "memo_writer": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 90.8,
+     "cost": 0.225752,
+     "tokens_in": 3802,
+     "tokens_out": 18179
+    }
+   },
+   "morning_cost": 0.5179,
+   "morning_seconds": 214.8
+  },
+  {
+   "id": "google-b",
+   "label": "Gemini 3.8 Flash",
+   "vendor": "Google",
+   "via": "openai",
+   "model": "gemini-3.8-flash",
+   "answered_by": [
+    "gemini-3.8-flash"
+   ],
+   "ran_at": "2026-10-28T22:53:18+00:00",
+   "tasks": {
+    "intake_mapper": {
+     "runs": 12,
+     "valid": 12,
+     "first_try": 12,
+     "errors": 0,
+     "seconds": 16.5,
+     "cost": 0.010496,
+     "tokens_in": 2871,
+     "tokens_out": 2225,
+     "exact": 10,
+     "same": 2,
+     "harmful": 0,
+     "caught": 0,
+     "accepted": 12
+    },
+    "daily_commentary": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 68.3,
+     "cost": 0.04045,
+     "tokens_in": 1848,
+     "tokens_out": 10417
+    },
+    "deal_analyst": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 32.4,
+     "cost": 0.020792,
+     "tokens_in": 3257,
+     "tokens_out": 4893
+    },
+    "board_deck": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 75.3,
+     "cost": 0.041336,
+     "tokens_in": 1710,
+     "tokens_out": 10681
+    },
+    "memo_writer": {
+     "runs": 1,
+     "valid": 1,
+     "first_try": 1,
+     "errors": 0,
+     "seconds": 157.1,
+     "cost": 0.090624,
+     "tokens_in": 3802,
+     "tokens_out": 23406
+    }
+   },
+   "morning_cost": 0.2037,
+   "morning_seconds": 349.6
+  }
+ ],
+ "left_out": [],
+ "notes": []
+}

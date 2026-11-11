@@ -1,0 +1,621 @@
+{
+ "task_id": "intake_V09",
+ "task": "intake_mapper",
+ "prompt": {
+  "id": "intake_mapper",
+  "version": "1",
+  "sha256": "ad0089c987267830d066f8fea5051c315f4e45ef048079c5b850f26127860638",
+  "system": "You map the columns of a trucking company's TMS export to a fixed schema so the file can be loaded into a fund's ledger. The export's layout has changed and no parser recognizes it yet. Code checks your mapping before anyone uses it. It parses every row with your mapping, then checks the dates against the business day, the miles and dollar amounts against each other, the load IDs for duplicates, the totals row against the rows above it, and the revenue total against the invoicing system's batch. A wrong mapping fails those checks and the file is held, so map only what the rows support.\n\nThe input gives you the first two rows of the sheet, the next ten rows, the last two rows, the schema with each field's meaning, and the layout the parser already knows as an example.\n\nWhat to return:\n- header_rows: 2 when the first row holds group labels above the column names, and 1 when the first row is the column names.\n- columns: every column of the header row, in order, as [column name exactly as written, schema field]. Use null for a column the schema doesn't need. Each schema field appears exactly once.\n- date_format: the Python strptime format that parses the date column, like %Y-%m-%d. Test it against every sample row. A day above 12 tells a day-first date from a month-first one.\n- money_format: text for currency text like $1,234.56, plain for bare numbers, and paren for numbers with negatives in parentheses.\n- on_time: the exact cell values that mean on time and late, as strings. Read the column's name with care, because a column that asks whether a load was late turns the values around.\n- totals_label: the label of a totals row at the bottom exactly as written, or null when the last rows are loads.\n- confidence: a number from 0 to 1 for each schema field.\n- notes: one sentence on anything you were unsure of.\n\nSome columns look like a schema field and aren't, such as an index, a rate per mile, or a total that adds other columns together. Map those to null. A credit row has zero miles and a negative charge, and it's still data.\n\nReply with exactly one JSON object and nothing else."
+ },
+ "input": {
+  "task": "intake_mapper",
+  "file": "V09_2026-10-15.xlsx",
+  "top_rows": [
+   [
+    "Load ID",
+    "Ship Date",
+    "Shipper",
+    "Lane",
+    "Miles",
+    "Deadhead",
+    "Linehaul",
+    "Fuel Index",
+    "FSC",
+    "Accessorials",
+    "Carrier Cost",
+    "On Time"
+   ],
+   [
+    "BB429495",
+    "2026-10-14",
+    "Wichita Falls Wire",
+    "DAL-HOU",
+    "242",
+    "0",
+    "653.4",
+    "4.007",
+    "137.94",
+    "0.0",
+    "640.09",
+    "Y"
+   ]
+  ],
+  "sample_rows": [
+   [
+    "BB429496",
+    "2026-10-14",
+    "Mustang Auto Parts",
+    "ELP-FTW",
+    "600",
+    "0",
+    "1680.0",
+    "3.758",
+    "324.0",
+    "0.0",
+    "1686.9",
+    "Y"
+   ],
+   [
+    "BB429497",
+    "2026-10-14",
+    "Hill Country Home Goods",
+    "ELP-FTW",
+    "580",
+    "0",
+    "1699.4",
+    "4.043",
+    "295.8",
+    "0.0",
+    "1673.49",
+    "Y"
+   ],
+   [
+    "BB429498",
+    "2026-10-14",
+    "Comal Kitchen Brands",
+    "AUS-DAL",
+    "198",
+    "0",
+    "594.0",
+    "3.629",
+    "106.92",
+    "0.0",
+    "571.11",
+    "Y"
+   ],
+   [
+    "BB429499",
+    "2026-10-14",
+    "Lone Oak Building Supply",
+    "NOL-HOU",
+    "357",
+    "73",
+    "1095.99",
+    "4.024",
+    "160.65",
+    "0.0",
+    "",
+    "Y"
+   ],
+   [
+    "BB429500",
+    "2026-10-14",
+    "Mustang Auto Parts",
+    "DAL-SHV",
+    "192",
+    "0",
+    "453.12",
+    "3.674",
+    "92.16",
+    "0.0",
+    "469.78",
+    "Y"
+   ],
+   [
+    "BB429501",
+    "2026-10-14",
+    "Red River Plastics",
+    "OKC-DAL",
+    "212",
+    "32",
+    "612.68",
+    "3.932",
+    "120.84",
+    "0.0",
+    "",
+    "Y"
+   ],
+   [
+    "BB429502",
+    "2026-10-14",
+    "Pecos Pipe Supply",
+    "HOU-DAL",
+    "241",
+    "43",
+    "501.28",
+    "3.927",
+    "108.45",
+    "0.0",
+    "",
+    "Y"
+   ],
+   [
+    "BB429503",
+    "2026-10-14",
+    "Llano Stone Works",
+    "HOU-NOL",
+    "357",
+    "0",
+    "738.99",
+    "3.86",
+    "174.93",
+    "0.0",
+    "798.08",
+    "N"
+   ],
+   [
+    "BB429504",
+    "2026-10-14",
+    "Tyler Textile",
+    "DAL-SHV",
+    "194",
+    "39",
+    "448.14",
+    "3.935",
+    "104.76",
+    "0.0",
+    "",
+    "Y"
+   ],
+   [
+    "BB429505",
+    "2026-10-14",
+    "Brazos Bottling",
+    "HOU-BPT",
+    "85",
+    "0",
+    "186.15",
+    "3.831",
+    "43.35",
+    "0.0",
+    "200.42",
+    "Y"
+   ]
+  ],
+  "last_rows": [
+   [
+    "BB429629",
+    "2026-10-14",
+    "Lampasas Lighting",
+    "HOU-SAT",
+    "196",
+    "0",
+    "454.72",
+    "3.748",
+    "88.2",
+    "0.0",
+    "454.12",
+    "Y"
+   ],
+   [
+    "TOTAL",
+    "",
+    "",
+    "",
+    "36343",
+    "2557",
+    "95611.36",
+    "",
+    "18914.76",
+    "1425.0",
+    "45664.2",
+    ""
+   ]
+  ],
+  "row_count": 137,
+  "schema": [
+   {
+    "field": "load_id",
+    "kind": "text",
+    "meaning": "the load's unique ID"
+   },
+   {
+    "field": "date",
+    "kind": "date",
+    "meaning": "the day the load shipped or was picked up"
+   },
+   {
+    "field": "customer",
+    "kind": "text",
+    "meaning": "the customer billed for the load"
+   },
+   {
+    "field": "lane",
+    "kind": "text",
+    "meaning": "origin and destination"
+   },
+   {
+    "field": "miles",
+    "kind": "whole number",
+    "meaning": "loaded miles"
+   },
+   {
+    "field": "empty_miles",
+    "kind": "whole number",
+    "meaning": "empty or deadhead miles driven to reach the load"
+   },
+   {
+    "field": "linehaul_rev",
+    "kind": "money",
+    "meaning": "linehaul revenue for the load"
+   },
+   {
+    "field": "fuel_surcharge",
+    "kind": "money",
+    "meaning": "fuel surcharge revenue for the load"
+   },
+   {
+    "field": "accessorials",
+    "kind": "money",
+    "meaning": "accessorial charges like detention or lumper fees, negative on a credit row"
+   },
+   {
+    "field": "carrier_cost",
+    "kind": "money",
+    "meaning": "what was paid to an outside carrier on a brokered load, blank on the company's own trucks"
+   },
+   {
+    "field": "on_time",
+    "kind": "yes or no",
+    "meaning": "whether the load was delivered on time"
+   }
+  ],
+  "known_layout_example": {
+   "header_rows": 2,
+   "columns": [
+    [
+     "Load #",
+     "load_id"
+    ],
+    [
+     "Ship Date",
+     "date"
+    ],
+    [
+     "Customer",
+     "customer"
+    ],
+    [
+     "Lane",
+     "lane"
+    ],
+    [
+     "Loaded Miles",
+     "miles"
+    ],
+    [
+     "Empty Miles",
+     "empty_miles"
+    ],
+    [
+     "Linehaul Rev",
+     "linehaul_rev"
+    ],
+    [
+     "Fuel Surcharge",
+     "fuel_surcharge"
+    ],
+    [
+     "Accessorials",
+     "accessorials"
+    ],
+    [
+     "Carrier Cost",
+     "carrier_cost"
+    ],
+    [
+     "On Time",
+     "on_time"
+    ]
+   ],
+   "date_format": "%m/%d/%Y",
+   "money_format": "text",
+   "on_time": {
+    "true": "Y",
+    "false": "N"
+   },
+   "totals_label": "TOTAL"
+  },
+  "formats": {
+   "date_format": "a Python strptime format string, like %m/%d/%Y",
+   "money_format": {
+    "text": "currency text like $1,234.56 and -$250.00",
+    "plain": "plain numbers like 1234.56 and -250",
+    "paren": "text like 1,234.56 with negatives in parentheses (250.00)"
+   }
+  }
+ },
+ "input_sha256": "afc489e6bf672b408be0df88ed1452d1a36ce4ba66bfe730d94900ed82160f84",
+ "ids": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "raw": "{\"header_rows\":1,\"columns\":[[\"Load ID\",\"load_id\"],[\"Ship Date\",\"date\"],[\"Shipper\",\"customer\"],[\"Lane\",\"lane\"],[\"Miles\",\"miles\"],[\"Deadhead\",\"empty_miles\"],[\"Linehaul\",\"linehaul_rev\"],[\"Fuel Index\",\"null\"],[\"FSC\",\"fuel_surcharge\"],[\"Accessorials\",\"accessorials\"],[\"Carrier Cost\",\"carrier_cost\"],[\"On Time\",\"on_time\"]],\"date_format\":\"%Y-%m-%d\",\"money_format\":\"plain\",\"on_time\":{\"true\":\"Y\",\"false\":\"N\"},\"totals_label\":\"TOTAL\",\"confidence\":{\"load_id\":0.98,\"date\":0.95,\"customer\":0.85,\"lane\":0.98,\"miles\":0.92,\"empty_miles\":0.93,\"linehaul_rev\":0.95,\"fuel_surcharge\":0.93,\"accessorials\":0.9,\"carrier_cost\":0.95,\"on_time\":0.96},\"notes\":\"I mapped Shipper to customer on the assumption that the shipper is the billed party, I took Fuel Index (values near 3.6–4.0) to be a per-gallon diesel price rather than revenue and left it unmapped, and because every sample date is 2026-10-14 the year-month-day order is read from the layout rather than confirmed by a day above 12.\"}",
+   "parsed": {
+    "header_rows": 1,
+    "columns": [
+     [
+      "Load ID",
+      "load_id"
+     ],
+     [
+      "Ship Date",
+      "date"
+     ],
+     [
+      "Shipper",
+      "customer"
+     ],
+     [
+      "Lane",
+      "lane"
+     ],
+     [
+      "Miles",
+      "miles"
+     ],
+     [
+      "Deadhead",
+      "empty_miles"
+     ],
+     [
+      "Linehaul",
+      "linehaul_rev"
+     ],
+     [
+      "Fuel Index",
+      "null"
+     ],
+     [
+      "FSC",
+      "fuel_surcharge"
+     ],
+     [
+      "Accessorials",
+      "accessorials"
+     ],
+     [
+      "Carrier Cost",
+      "carrier_cost"
+     ],
+     [
+      "On Time",
+      "on_time"
+     ]
+    ],
+    "date_format": "%Y-%m-%d",
+    "money_format": "plain",
+    "on_time": {
+     "true": "Y",
+     "false": "N"
+    },
+    "totals_label": "TOTAL",
+    "confidence": {
+     "load_id": 0.98,
+     "date": 0.95,
+     "customer": 0.85,
+     "lane": 0.98,
+     "miles": 0.92,
+     "empty_miles": 0.93,
+     "linehaul_rev": 0.95,
+     "fuel_surcharge": 0.93,
+     "accessorials": 0.9,
+     "carrier_cost": 0.95,
+     "on_time": 0.96
+    },
+    "notes": "I mapped Shipper to customer on the assumption that the shipper is the billed party, I took Fuel Index (values near 3.6–4.0) to be a per-gallon diesel price rather than revenue and left it unmapped, and because every sample date is 2026-10-14 the year-month-day order is read from the layout rather than confirmed by a day above 12."
+   },
+   "problems": [
+    "null isn't a schema field"
+   ],
+   "meta": {
+    "ms": 7237,
+    "api_ms": 7080,
+    "input_tokens": 2,
+    "output_tokens": 690,
+    "cost_usd": 0.0731842,
+    "models": [
+     "claude-opus-5-5"
+    ]
+   }
+  },
+  {
+   "attempt": 2,
+   "raw": "{\"header_rows\":1,\"columns\":[[\"Load ID\",\"load_id\"],[\"Ship Date\",\"date\"],[\"Shipper\",\"customer\"],[\"Lane\",\"lane\"],[\"Miles\",\"miles\"],[\"Deadhead\",\"empty_miles\"],[\"Linehaul\",\"linehaul_rev\"],[\"Fuel Index\",null],[\"FSC\",\"fuel_surcharge\"],[\"Accessorials\",\"accessorials\"],[\"Carrier Cost\",\"carrier_cost\"],[\"On Time\",\"on_time\"]],\"date_format\":\"%Y-%m-%d\",\"money_format\":\"plain\",\"on_time\":{\"true\":\"Y\",\"false\":\"N\"},\"totals_label\":\"TOTAL\",\"confidence\":{\"load_id\":0.98,\"date\":0.95,\"customer\":0.85,\"lane\":0.97,\"miles\":0.92,\"empty_miles\":0.93,\"linehaul_rev\":0.94,\"fuel_surcharge\":0.9,\"accessorials\":0.88,\"carrier_cost\":0.93,\"on_time\":0.95},\"notes\":\"I mapped Shipper to customer on the assumption that the shipper is the party billed, left Fuel Index unmapped because it is a per-gallon price index and not revenue, and could not test the year-first date format against a day above 12 because every sample row shows 2026-10-14.\"}",
+   "parsed": {
+    "header_rows": 1,
+    "columns": [
+     [
+      "Load ID",
+      "load_id"
+     ],
+     [
+      "Ship Date",
+      "date"
+     ],
+     [
+      "Shipper",
+      "customer"
+     ],
+     [
+      "Lane",
+      "lane"
+     ],
+     [
+      "Miles",
+      "miles"
+     ],
+     [
+      "Deadhead",
+      "empty_miles"
+     ],
+     [
+      "Linehaul",
+      "linehaul_rev"
+     ],
+     [
+      "Fuel Index",
+      null
+     ],
+     [
+      "FSC",
+      "fuel_surcharge"
+     ],
+     [
+      "Accessorials",
+      "accessorials"
+     ],
+     [
+      "Carrier Cost",
+      "carrier_cost"
+     ],
+     [
+      "On Time",
+      "on_time"
+     ]
+    ],
+    "date_format": "%Y-%m-%d",
+    "money_format": "plain",
+    "on_time": {
+     "true": "Y",
+     "false": "N"
+    },
+    "totals_label": "TOTAL",
+    "confidence": {
+     "load_id": 0.98,
+     "date": 0.95,
+     "customer": 0.85,
+     "lane": 0.97,
+     "miles": 0.92,
+     "empty_miles": 0.93,
+     "linehaul_rev": 0.94,
+     "fuel_surcharge": 0.9,
+     "accessorials": 0.88,
+     "carrier_cost": 0.93,
+     "on_time": 0.95
+    },
+    "notes": "I mapped Shipper to customer on the assumption that the shipper is the party billed, left Fuel Index unmapped because it is a per-gallon price index and not revenue, and could not test the year-first date format against a day above 12 because every sample row shows 2026-10-14."
+   },
+   "problems": [],
+   "meta": {
+    "ms": 6434,
+    "api_ms": 6292,
+    "input_tokens": 2,
+    "output_tokens": 658,
+    "cost_usd": 0.07288019999999999,
+    "models": [
+     "claude-opus-5-5"
+    ]
+   }
+  }
+ ],
+ "final": {
+  "parsed": {
+   "header_rows": 1,
+   "columns": [
+    [
+     "Load ID",
+     "load_id"
+    ],
+    [
+     "Ship Date",
+     "date"
+    ],
+    [
+     "Shipper",
+     "customer"
+    ],
+    [
+     "Lane",
+     "lane"
+    ],
+    [
+     "Miles",
+     "miles"
+    ],
+    [
+     "Deadhead",
+     "empty_miles"
+    ],
+    [
+     "Linehaul",
+     "linehaul_rev"
+    ],
+    [
+     "Fuel Index",
+     null
+    ],
+    [
+     "FSC",
+     "fuel_surcharge"
+    ],
+    [
+     "Accessorials",
+     "accessorials"
+    ],
+    [
+     "Carrier Cost",
+     "carrier_cost"
+    ],
+    [
+     "On Time",
+     "on_time"
+    ]
+   ],
+   "date_format": "%Y-%m-%d",
+   "money_format": "plain",
+   "on_time": {
+    "true": "Y",
+    "false": "N"
+   },
+   "totals_label": "TOTAL",
+   "confidence": {
+    "load_id": 0.98,
+    "date": 0.95,
+    "customer": 0.85,
+    "lane": 0.97,
+    "miles": 0.92,
+    "empty_miles": 0.93,
+    "linehaul_rev": 0.94,
+    "fuel_surcharge": 0.9,
+    "accessorials": 0.88,
+    "carrier_cost": 0.93,
+    "on_time": 0.95
+   },
+   "notes": "I mapped Shipper to customer on the assumption that the shipper is the party billed, left Fuel Index unmapped because it is a per-gallon price index and not revenue, and could not test the year-first date format against a day above 12 because every sample row shows 2026-10-14."
+  },
+  "valid": true,
+  "problems": []
+ },
+ "model": "claude-opus-5-5",
+ "cli": {
+  "model": "opus",
+  "flags": [
+   "--model",
+   "--output-format",
+   "--system-prompt",
+   "--tools",
+   "--disallowedTools",
+   "--strict-mcp-config",
+   "--no-session-persistence"
+  ],
+  "tools_off": "--tools"
+ },
+ "recorded_at": "2026-10-27T19:01:31+00:00",
+ "seconds": 16.0,
+ "intake": {
+  "accepted": true,
+  "reasons": [],
+  "exact_match": true
+ }
+}

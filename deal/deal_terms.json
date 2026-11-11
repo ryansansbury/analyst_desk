@@ -1,0 +1,16 @@
+{
+ "note": "Deal-team inputs for the first-draft model of Brightrow Field Services. Illustrative terms for a first look, set by the deal team and never by an agent. Multiples are stored in tenths or hundredths and rates in basis points, so every value is a whole number.",
+ "terms": {
+  "entry_multiple_x10": 80,
+  "exit_multiple_x10": 80,
+  "fees_bp": 250,
+  "leverage_x10": 35,
+  "rate_bp": 950,
+  "amortization_bp": 500,
+  "sweep_bp": 5000,
+  "tax_bp": 2500,
+  "standalone_escalation_bp": 300,
+  "covenant_leverage_x100": [450, 425, 400, 375, 350],
+  "covenant_coverage_x100": 250
+ }
+}

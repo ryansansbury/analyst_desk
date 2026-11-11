@@ -1,0 +1,36 @@
+{
+ "frozen_at": "2026-11-06T12:23",
+ "catalog_sha256": "65a61a985f6b27b401c9be954162c266e098bae6d45a35513230a89a0496d8ff",
+ "files": [
+  "generate/catalog.py"
+ ],
+ "key_sha256": {
+  "2026": "d2950b50c51ef87c87aa2a43ca108c60563f74f72c63709239cadb169b6afd34",
+  "11": "02c50e7607a0577b2e4a0790c4066bc35b9f5423aeaddfe08006c3802a446930"
+ },
+ "errors": [
+  "E1",
+  "E2",
+  "E3",
+  "E4",
+  "E5",
+  "E6"
+ ],
+ "lookalikes": [
+  "L1",
+  "L2",
+  "L3"
+ ],
+ "history": [
+  {
+   "at": "2026-10-27T10:59",
+   "catalog_sha256": "30196ba63dcbf77abac431228dd0df5d591b59238d4dc0a18a0364b5dfe47cd8",
+   "reason": "first freeze, before any check or prompt was written"
+  },
+  {
+   "at": "2026-11-06T12:23",
+   "catalog_sha256": "65a61a985f6b27b401c9be954162c266e098bae6d45a35513230a89a0496d8ff",
+   "reason": "The company and project names changed on 11/6 by a one-to-one swap of words, after a check found real companies with some of the old names. The catalog's logic, the keys it plants, and the eval files are otherwise the same as the 10/27 freeze."
+  }
+ ]
+}

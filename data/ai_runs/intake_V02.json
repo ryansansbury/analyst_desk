@@ -1,0 +1,508 @@
+{
+ "task_id": "intake_V02",
+ "task": "intake_mapper",
+ "prompt": {
+  "id": "intake_mapper",
+  "version": "1",
+  "sha256": "ad0089c987267830d066f8fea5051c315f4e45ef048079c5b850f26127860638",
+  "system": "You map the columns of a trucking company's TMS export to a fixed schema so the file can be loaded into a fund's ledger. The export's layout has changed and no parser recognizes it yet. Code checks your mapping before anyone uses it. It parses every row with your mapping, then checks the dates against the business day, the miles and dollar amounts against each other, the load IDs for duplicates, the totals row against the rows above it, and the revenue total against the invoicing system's batch. A wrong mapping fails those checks and the file is held, so map only what the rows support.\n\nThe input gives you the first two rows of the sheet, the next ten rows, the last two rows, the schema with each field's meaning, and the layout the parser already knows as an example.\n\nWhat to return:\n- header_rows: 2 when the first row holds group labels above the column names, and 1 when the first row is the column names.\n- columns: every column of the header row, in order, as [column name exactly as written, schema field]. Use null for a column the schema doesn't need. Each schema field appears exactly once.\n- date_format: the Python strptime format that parses the date column, like %Y-%m-%d. Test it against every sample row. A day above 12 tells a day-first date from a month-first one.\n- money_format: text for currency text like $1,234.56, plain for bare numbers, and paren for numbers with negatives in parentheses.\n- on_time: the exact cell values that mean on time and late, as strings. Read the column's name with care, because a column that asks whether a load was late turns the values around.\n- totals_label: the label of a totals row at the bottom exactly as written, or null when the last rows are loads.\n- confidence: a number from 0 to 1 for each schema field.\n- notes: one sentence on anything you were unsure of.\n\nSome columns look like a schema field and aren't, such as an index, a rate per mile, or a total that adds other columns together. Map those to null. A credit row has zero miles and a negative charge, and it's still data.\n\nReply with exactly one JSON object and nothing else."
+ },
+ "input": {
+  "task": "intake_mapper",
+  "file": "V02_2026-10-07.xlsx",
+  "top_rows": [
+   [
+    "Shipment ID",
+    "Date Shipped",
+    "Shipper",
+    "Route",
+    "Loaded Mi",
+    "Empty Mi",
+    "LH Revenue",
+    "FSC",
+    "Other Charges",
+    "Carrier $",
+    "OTD"
+   ],
+   [
+    "BB428642",
+    "2026-10-06",
+    "Marfa Mattress Co",
+    "AUS-DAL",
+    "199",
+    "0",
+    "577.1",
+    "111.44",
+    "150.0",
+    "563.59",
+    "Yes"
+   ]
+  ],
+  "sample_rows": [
+   [
+    "BB428643",
+    "2026-10-06",
+    "Comal Kitchen Brands",
+    "DAL-AUS",
+    "194",
+    "20",
+    "504.4",
+    "97.0",
+    "0.0",
+    "",
+    "Yes"
+   ],
+   [
+    "BB428644",
+    "2026-10-06",
+    "Sulphur Springs Snacks",
+    "LRD-SAT",
+    "154",
+    "0",
+    "348.04",
+    "69.3",
+    "0.0",
+    "366.4",
+    "Yes"
+   ],
+   [
+    "BB428645",
+    "2026-10-06",
+    "Waco Warehouse Supply",
+    "HOU-SAT",
+    "198",
+    "36",
+    "461.34",
+    "114.84",
+    "0.0",
+    "",
+    "Yes"
+   ],
+   [
+    "BB428646",
+    "2026-10-06",
+    "Pecan Valley Foods",
+    "ELP-FTW",
+    "588",
+    "52",
+    "1681.68",
+    "335.16",
+    "0.0",
+    "",
+    "Yes"
+   ],
+   [
+    "BB428647",
+    "2026-10-06",
+    "Brazos Bottling",
+    "DAL-OKC",
+    "204",
+    "42",
+    "475.32",
+    "104.04",
+    "0.0",
+    "",
+    "No"
+   ],
+   [
+    "BB428648",
+    "2026-10-06",
+    "Caddo Lake Lumber",
+    "AUS-DAL",
+    "189",
+    "0",
+    "559.44",
+    "92.61",
+    "0.0",
+    "534.39",
+    "Yes"
+   ],
+   [
+    "BB428649",
+    "2026-10-06",
+    "Brazos Bottling",
+    "DAL-SHV",
+    "188",
+    "37",
+    "400.44",
+    "103.4",
+    "0.0",
+    "",
+    "Yes"
+   ],
+   [
+    "BB428650",
+    "2026-10-06",
+    "Hill Country Home Goods",
+    "SAT-LRD",
+    "157",
+    "0",
+    "477.28",
+    "70.65",
+    "0.0",
+    "463.83",
+    "Yes"
+   ],
+   [
+    "BB428651",
+    "2026-10-06",
+    "Nueces Tire",
+    "NOL-HOU",
+    "348",
+    "33",
+    "824.76",
+    "160.08",
+    "0.0",
+    "",
+    "Yes"
+   ],
+   [
+    "BB428652",
+    "2026-10-06",
+    "Laredo Labelworks",
+    "AUS-DAL",
+    "191",
+    "30",
+    "580.64",
+    "101.23",
+    "0.0",
+    "",
+    "Yes"
+   ]
+  ],
+  "last_rows": [
+   [
+    "BB428770",
+    "2026-10-06",
+    "Red River Plastics",
+    "HOU-NOL",
+    "340",
+    "0",
+    "758.2",
+    "159.8",
+    "100.0",
+    "798.14",
+    "No"
+   ],
+   [
+    "BB428771",
+    "2026-10-06",
+    "Red River Plastics",
+    "OKC-DAL",
+    "203",
+    "0",
+    "637.42",
+    "115.71",
+    "0.0",
+    "612.36",
+    "Yes"
+   ]
+  ],
+  "row_count": 131,
+  "schema": [
+   {
+    "field": "load_id",
+    "kind": "text",
+    "meaning": "the load's unique ID"
+   },
+   {
+    "field": "date",
+    "kind": "date",
+    "meaning": "the day the load shipped or was picked up"
+   },
+   {
+    "field": "customer",
+    "kind": "text",
+    "meaning": "the customer billed for the load"
+   },
+   {
+    "field": "lane",
+    "kind": "text",
+    "meaning": "origin and destination"
+   },
+   {
+    "field": "miles",
+    "kind": "whole number",
+    "meaning": "loaded miles"
+   },
+   {
+    "field": "empty_miles",
+    "kind": "whole number",
+    "meaning": "empty or deadhead miles driven to reach the load"
+   },
+   {
+    "field": "linehaul_rev",
+    "kind": "money",
+    "meaning": "linehaul revenue for the load"
+   },
+   {
+    "field": "fuel_surcharge",
+    "kind": "money",
+    "meaning": "fuel surcharge revenue for the load"
+   },
+   {
+    "field": "accessorials",
+    "kind": "money",
+    "meaning": "accessorial charges like detention or lumper fees, negative on a credit row"
+   },
+   {
+    "field": "carrier_cost",
+    "kind": "money",
+    "meaning": "what was paid to an outside carrier on a brokered load, blank on the company's own trucks"
+   },
+   {
+    "field": "on_time",
+    "kind": "yes or no",
+    "meaning": "whether the load was delivered on time"
+   }
+  ],
+  "known_layout_example": {
+   "header_rows": 2,
+   "columns": [
+    [
+     "Load #",
+     "load_id"
+    ],
+    [
+     "Ship Date",
+     "date"
+    ],
+    [
+     "Customer",
+     "customer"
+    ],
+    [
+     "Lane",
+     "lane"
+    ],
+    [
+     "Loaded Miles",
+     "miles"
+    ],
+    [
+     "Empty Miles",
+     "empty_miles"
+    ],
+    [
+     "Linehaul Rev",
+     "linehaul_rev"
+    ],
+    [
+     "Fuel Surcharge",
+     "fuel_surcharge"
+    ],
+    [
+     "Accessorials",
+     "accessorials"
+    ],
+    [
+     "Carrier Cost",
+     "carrier_cost"
+    ],
+    [
+     "On Time",
+     "on_time"
+    ]
+   ],
+   "date_format": "%m/%d/%Y",
+   "money_format": "text",
+   "on_time": {
+    "true": "Y",
+    "false": "N"
+   },
+   "totals_label": "TOTAL"
+  },
+  "formats": {
+   "date_format": "a Python strptime format string, like %m/%d/%Y",
+   "money_format": {
+    "text": "currency text like $1,234.56 and -$250.00",
+    "plain": "plain numbers like 1234.56 and -250",
+    "paren": "text like 1,234.56 with negatives in parentheses (250.00)"
+   }
+  }
+ },
+ "input_sha256": "9664157744f8910bf1cadb639875a9ab386c3dd4e4712abbfdcd05e5a0a52090",
+ "ids": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "raw": "{\"header_rows\": 1, \"columns\": [[\"Shipment ID\", \"load_id\"], [\"Date Shipped\", \"date\"], [\"Shipper\", \"customer\"], [\"Route\", \"lane\"], [\"Loaded Mi\", \"miles\"], [\"Empty Mi\", \"empty_miles\"], [\"LH Revenue\", \"linehaul_rev\"], [\"FSC\", \"fuel_surcharge\"], [\"Other Charges\", \"accessorials\"], [\"Carrier $\", \"carrier_cost\"], [\"OTD\", \"on_time\"]], \"date_format\": \"%Y-%m-%d\", \"money_format\": \"plain\", \"on_time\": {\"true\": \"Yes\", \"false\": \"No\"}, \"totals_label\": null, \"confidence\": {\"load_id\": 0.98, \"date\": 0.95, \"customer\": 0.85, \"lane\": 0.97, \"miles\": 0.97, \"empty_miles\": 0.96, \"linehaul_rev\": 0.96, \"fuel_surcharge\": 0.95, \"accessorials\": 0.85, \"carrier_cost\": 0.94, \"on_time\": 0.9}, \"notes\": \"Every sample date is the 6th, so the year-month-day order rests on the ISO convention rather than a day above 12; I also assumed the Shipper is the billed customer, Other Charges are the accessorials, and OTD means on-time delivery with Yes as on time.\"}",
+   "parsed": {
+    "header_rows": 1,
+    "columns": [
+     [
+      "Shipment ID",
+      "load_id"
+     ],
+     [
+      "Date Shipped",
+      "date"
+     ],
+     [
+      "Shipper",
+      "customer"
+     ],
+     [
+      "Route",
+      "lane"
+     ],
+     [
+      "Loaded Mi",
+      "miles"
+     ],
+     [
+      "Empty Mi",
+      "empty_miles"
+     ],
+     [
+      "LH Revenue",
+      "linehaul_rev"
+     ],
+     [
+      "FSC",
+      "fuel_surcharge"
+     ],
+     [
+      "Other Charges",
+      "accessorials"
+     ],
+     [
+      "Carrier $",
+      "carrier_cost"
+     ],
+     [
+      "OTD",
+      "on_time"
+     ]
+    ],
+    "date_format": "%Y-%m-%d",
+    "money_format": "plain",
+    "on_time": {
+     "true": "Yes",
+     "false": "No"
+    },
+    "totals_label": null,
+    "confidence": {
+     "load_id": 0.98,
+     "date": 0.95,
+     "customer": 0.85,
+     "lane": 0.97,
+     "miles": 0.97,
+     "empty_miles": 0.96,
+     "linehaul_rev": 0.96,
+     "fuel_surcharge": 0.95,
+     "accessorials": 0.85,
+     "carrier_cost": 0.94,
+     "on_time": 0.9
+    },
+    "notes": "Every sample date is the 6th, so the year-month-day order rests on the ISO convention rather than a day above 12; I also assumed the Shipper is the billed customer, Other Charges are the accessorials, and OTD means on-time delivery with Yes as on time."
+   },
+   "problems": [],
+   "meta": {
+    "ms": 5881,
+    "api_ms": 5721,
+    "input_tokens": 2,
+    "output_tokens": 618,
+    "cost_usd": 0.0711282,
+    "models": [
+     "claude-opus-5-5"
+    ]
+   }
+  }
+ ],
+ "final": {
+  "parsed": {
+   "header_rows": 1,
+   "columns": [
+    [
+     "Shipment ID",
+     "load_id"
+    ],
+    [
+     "Date Shipped",
+     "date"
+    ],
+    [
+     "Shipper",
+     "customer"
+    ],
+    [
+     "Route",
+     "lane"
+    ],
+    [
+     "Loaded Mi",
+     "miles"
+    ],
+    [
+     "Empty Mi",
+     "empty_miles"
+    ],
+    [
+     "LH Revenue",
+     "linehaul_rev"
+    ],
+    [
+     "FSC",
+     "fuel_surcharge"
+    ],
+    [
+     "Other Charges",
+     "accessorials"
+    ],
+    [
+     "Carrier $",
+     "carrier_cost"
+    ],
+    [
+     "OTD",
+     "on_time"
+    ]
+   ],
+   "date_format": "%Y-%m-%d",
+   "money_format": "plain",
+   "on_time": {
+    "true": "Yes",
+    "false": "No"
+   },
+   "totals_label": null,
+   "confidence": {
+    "load_id": 0.98,
+    "date": 0.95,
+    "customer": 0.85,
+    "lane": 0.97,
+    "miles": 0.97,
+    "empty_miles": 0.96,
+    "linehaul_rev": 0.96,
+    "fuel_surcharge": 0.95,
+    "accessorials": 0.85,
+    "carrier_cost": 0.94,
+    "on_time": 0.9
+   },
+   "notes": "Every sample date is the 6th, so the year-month-day order rests on the ISO convention rather than a day above 12; I also assumed the Shipper is the billed customer, Other Charges are the accessorials, and OTD means on-time delivery with Yes as on time."
+  },
+  "valid": true,
+  "problems": []
+ },
+ "model": "claude-opus-5-5",
+ "cli": {
+  "model": "opus",
+  "flags": [
+   "--model",
+   "--output-format",
+   "--system-prompt",
+   "--tools",
+   "--disallowedTools",
+   "--strict-mcp-config",
+   "--no-session-persistence"
+  ],
+  "tools_off": "--tools"
+ },
+ "recorded_at": "2026-10-27T19:01:06+00:00",
+ "seconds": 7.2,
+ "intake": {
+  "accepted": true,
+  "reasons": [],
+  "exact_match": true
+ }
+}

@@ -1,0 +1,50 @@
+# An excerpt of generate/dataroom.py, copied for the code view on this page. The view reads only this copy.
+
+"""Brightrow Field Services' data room: 36 months of P&L by service line, revenue by customer, monthly KPIs, and the
+seller's teaser.
+
+Fiscal years end in September, and the 36 months run Oct 2023 to Sep 2026, so FY2026 is the last twelve months.
+Module cleaning sat inside corrective repairs through March 2025 (month 18), with memo rows that let the model
+restate it. Month 23 carries a one-time legal settlement. The parent charges a fixed overhead allocation, and the
+Notes sheet gives management's estimate of what a standalone business would spend instead.
+
+Tuned so the ledger's FY2026 adjusted EBITDA margin is exactly 18.4% and the largest customer is exactly 12.7% of
+FY2026 revenue. The teaser's margin claim adds back the allocation without the standalone cost, which comes out
+above 20%. Its concentration claim says no customer is above 10%. Its renewal claim is true.
+"""
+
+# ...
+
+class DataRoom:
+
+    # ...
+
+    def teaser_md(self):
+        c = CLAIMS
+        return f"""# Project Brightrow
+
+## A carve-out in commercial solar operations and maintenance
+
+Confidential teaser prepared by Halvorsen Pike Advisors for the seller. Not an offer to sell securities.
+
+### The opportunity
+
+Our client, a diversified electrical contractor, is exploring the sale of Brightrow Field Services ("Brightrow" or the "Company"), its commercial solar operations and maintenance business. Brightrow will be offered as a standalone carve-out with its own management team, field technicians and customer contracts, and the seller will provide transition services for twelve months after closing.
+
+### Investment highlights
+
+- **Recurring, contracted revenue.** Preventive maintenance contracts and monitoring subscriptions provide a predictable base, and contract renewal rates have stayed above {c['renewal_floor_pct']}% through the last twelve months.
+- **Attractive margins.** Brightrow has delivered EBITDA margins above {c['margin_floor_pct']}% over the last twelve months, supported by route density and disciplined pricing.
+- **Diversified customer base.** No customer accounts for more than {c['customer_cap_pct']}% of revenue, and the Company serves commercial owners, community solar funds and school districts across Texas and Oklahoma.
+- **Growth runway.** The installed base of commercial solar in the region keeps growing, and the Company adds technicians ahead of demand.
+
+### Business overview
+
+Founded in 2012, Brightrow maintains rooftop and ground-mount commercial solar systems under multi-year service agreements. Services span preventive maintenance, corrective repairs, module cleaning and remote monitoring, delivered from three regional depots by a field team trained on every major inverter platform.
+
+The Company has grown alongside its customers' portfolios, and its monitoring platform lets technicians resolve many faults before a site visit is needed.
+
+### Process
+
+The seller expects to share a confidential information memorandum with qualified parties who sign a non-disclosure agreement. First-round indications of interest will be requested in early 2027. All inquiries should go through Halvorsen Pike Advisors, and the Company's management and employees should not be contacted directly.
+"""

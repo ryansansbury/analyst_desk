@@ -1,0 +1,40 @@
+# An excerpt of generate/portfolio.py, copied for the code view on this page. The view reads only this copy.
+
+"""The fund's three portfolio companies: their daily operations, the files they send each morning, and budgets.
+
+Operations are simulated from July 1 through December so budgets and balances have a past and a plan. Files
+are written only for the 96 mornings in the window. Every amount is whole cents and every quantity whole kWh,
+miles or rooms. Look-alike L2 (a curtailed day) is planted here, since it's part of normal operations. L1 (the
+deposit lag) and L3 (the Labor Day dip) are structural.
+"""
+
+# ...
+
+DAY_WEIGHT = {"weekday": 1.0, "saturday": 0.35, "sunday": 0.29, "holiday": 0.56}
+
+# ...
+
+def day_type(d):
+    if d in HOLIDAY_DATES:
+        return "holiday"
+    return {5: "saturday", 6: "sunday"}.get(d.weekday(), "weekday")
+
+
+def insolation_mean(d):
+    """Seasonal daily insolation in kWh per square meter for West Texas, falling from late July into winter."""
+    doy = d.timetuple().tm_yday
+    return max(3.6, 7.35 - (doy - 211) * 0.0262)
+
+
+class Portfolio:
+
+    # ...
+
+    def _pick_l2(self):
+        """One curtailed day in the month to date and up to two earlier in the window, each at a seed-chosen site."""
+        rng = C.stream(self.seed, "L2")
+        ops = C.ops_day(C.DEMO)
+        this_month = [d for d in C.OPS_DAYS if d.month == ops.month and d < ops]
+        earlier = [d for d in C.OPS_DAYS if C.FIRST_MORNING.month <= d.month < ops.month]
+        picks = [rng.choice(this_month)] + rng.sample(earlier, rng.randint(0, 2))
+        return {d: rng.choice([s[0] for s in SITES]) for d in sorted(picks)}

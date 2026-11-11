@@ -1,0 +1,77 @@
+# An excerpt of agents/validate.py, copied for the code view on this page. The view reads only this copy.
+
+"""Validators for every agent's output: its schema, the limits the spec puts on it, the gate and the writing rules.
+
+Nothing an agent returns reaches the page unless validate() comes back with no problems. Problems read as plain
+sentences, because the recorder sends them back to the model once as a repair request. The gate runs on the
+agent's own text after its local IDs are translated to ledger IDs, and the writing-rules check runs on the text
+as the page would render it.
+"""
+
+# ...
+
+LOCAL = re.compile(r"\{([FDC]):?(\d+)\}")      # {D:7}, and {D7} since the ID itself reads D7
+
+# ...
+
+def resolve(ledger, keys):
+    """{local ID: ledger ref or None} from the meanings recorded with an input."""
+    out = {}
+    for local, item in keys.items():
+        k = item["key"]
+        if k[0] == "C":
+            row = ledger.conn.execute("SELECT claim_id FROM claims WHERE deliverable = ? AND COALESCE(metric, '') = ? AND "
+                                      "location = ? ORDER BY claim_id DESC LIMIT 1", (k[1], k[2], k[3])).fetchone()
+            out[local] = f"C{row[0]}" if row else None
+        else:
+            out[local] = ledger.find(k[0], k[1], k[2], k[3])
+    return out
+
+# ...
+
+def prose_problems(pieces, ledger, mapping, render_lint=True):
+    """Gate and writing-rule problems for [(location, agent text)], as sentences for a repair request."""
+    problems = []
+    allowed = {r for r in mapping.values() if r}
+    for location, text in pieces:
+        for m in LOCAL.finditer(text):
+            if not mapping.get(f"{m.group(1)}{m.group(2)}"):
+                problems.append(f"{location}: {m.group(0)} isn't one of the IDs you were given")
+        translated = to_ledger(text, mapping)
+        for f in gate.check([(location, translated)], ledger, allowed)["failures"]:
+            if f["kind"] == "unsupported":
+                problems.append(f"{location}: the number {f['token']!r} is typed in. Use a placeholder from the input "
+                                f"or write it in words if it isn't a figure")
+            elif "wasn't given" not in f["reason"] and "no such ID" not in f["reason"]:
+                problems.append(f"{location}: {f['token']} {f['reason']}")
+        if render_lint:
+            rendered = gate.render(translated, ledger)
+            problems += [f"{location}: {p}" for p in lint(rendered)]
+    return problems
+
+# ...
+
+def daily_commentary(out, inp, ledger, mapping):
+    if not isinstance(out, dict) or not isinstance(out.get("companies"), list):
+        return ["the reply needs a companies list"]
+    p, want = [], [c["company"] for c in inp["companies"]]
+    got = [c.get("company") for c in out["companies"] if isinstance(c, dict)]
+    if got != want:
+        p.append(f"companies must be {want} in that order")
+    pieces = []
+    for c in out["companies"]:
+        sents = c.get("sentences") if isinstance(c, dict) else None
+        if not isinstance(sents, list) or not 2 <= len(sents) <= 4 or not all(isinstance(s, str) for s in sents):
+            p.append(f"{c.get('company') if isinstance(c, dict) else c}: write two to four sentences")
+            continue
+        pieces += [(f"{c['company']} sentence {i}", s) for i, s in enumerate(sents, 1)]
+    return p + prose_problems(pieces, ledger, mapping)
+
+# ...
+
+def validate(task, out, inp, ledger=None, mapping=None):
+    if task == "intake_mapper":
+        return intake_mapper(out, inp)
+    fn = {"daily_commentary": daily_commentary, "deal_analyst": deal_analyst, "memo_writer": memo_writer,
+          "board_deck": board_deck}[task]
+    return fn(out, inp, ledger, mapping or {})

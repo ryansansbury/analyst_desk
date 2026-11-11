@@ -1,0 +1,21 @@
+# The local word list for the writing rules and the code section's guard never ships.
+private_words.txt
+.venv/
+.cache/
+node_modules/
+__pycache__/
+.DS_Store
+*.log
+.env
+.env.*
+# What the scripts write: screenshots, Chrome and LibreOffice profiles, and the recalculated workbook.
+scripts/out/
+# Build products. build.py regenerates all of them from the seed in under a minute.
+# The recorded agent runs in data/ai_runs/ stay tracked, since the page replays them and nothing can remake them.
+data/sources/
+data/scenarios/
+data/key/
+data/ledger.sqlite
+data/test_results.json
+site/
+outputs/

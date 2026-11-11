@@ -1,0 +1,552 @@
+{
+ "task_id": "intake_V12",
+ "task": "intake_mapper",
+ "prompt": {
+  "id": "intake_mapper",
+  "version": "1",
+  "sha256": "ad0089c987267830d066f8fea5051c315f4e45ef048079c5b850f26127860638",
+  "system": "You map the columns of a trucking company's TMS export to a fixed schema so the file can be loaded into a fund's ledger. The export's layout has changed and no parser recognizes it yet. Code checks your mapping before anyone uses it. It parses every row with your mapping, then checks the dates against the business day, the miles and dollar amounts against each other, the load IDs for duplicates, the totals row against the rows above it, and the revenue total against the invoicing system's batch. A wrong mapping fails those checks and the file is held, so map only what the rows support.\n\nThe input gives you the first two rows of the sheet, the next ten rows, the last two rows, the schema with each field's meaning, and the layout the parser already knows as an example.\n\nWhat to return:\n- header_rows: 2 when the first row holds group labels above the column names, and 1 when the first row is the column names.\n- columns: every column of the header row, in order, as [column name exactly as written, schema field]. Use null for a column the schema doesn't need. Each schema field appears exactly once.\n- date_format: the Python strptime format that parses the date column, like %Y-%m-%d. Test it against every sample row. A day above 12 tells a day-first date from a month-first one.\n- money_format: text for currency text like $1,234.56, plain for bare numbers, and paren for numbers with negatives in parentheses.\n- on_time: the exact cell values that mean on time and late, as strings. Read the column's name with care, because a column that asks whether a load was late turns the values around.\n- totals_label: the label of a totals row at the bottom exactly as written, or null when the last rows are loads.\n- confidence: a number from 0 to 1 for each schema field.\n- notes: one sentence on anything you were unsure of.\n\nSome columns look like a schema field and aren't, such as an index, a rate per mile, or a total that adds other columns together. Map those to null. A credit row has zero miles and a negative charge, and it's still data.\n\nReply with exactly one JSON object and nothing else."
+ },
+ "input": {
+  "task": "intake_mapper",
+  "file": "V12_2026-10-20.xlsx",
+  "top_rows": [
+   [
+    "LOAD",
+    "DT",
+    "CUST",
+    "LANE",
+    "LD MI",
+    "MT MI",
+    "LH",
+    "FSC",
+    "ACC",
+    "PT",
+    "OT",
+    "EQUIP",
+    "DISP"
+   ],
+   [
+    "BB429986",
+    "20261019",
+    "Gulf Coast Chemical Supply",
+    "HOU-BPT",
+    "87",
+    "0",
+    "227.07",
+    "50.46",
+    "0.0",
+    "230.75",
+    "1",
+    "TRK-1068",
+    "J. Bell"
+   ]
+  ],
+  "sample_rows": [
+   [
+    "BB429987",
+    "20261019",
+    "Gulf Coast Chemical Supply",
+    "DAL-OKC",
+    "204",
+    "21",
+    "493.68",
+    "116.28",
+    "0.0",
+    "",
+    "1",
+    "TRK-1133",
+    "S. Patel"
+   ],
+   [
+    "BB429988",
+    "20261019",
+    "Guadalupe Grocers",
+    "SAT-HOU",
+    "195",
+    "0",
+    "524.55",
+    "95.55",
+    "0.0",
+    "528.75",
+    "1",
+    "TRK-1046",
+    "A. Ruiz"
+   ],
+   [
+    "BB429989",
+    "20261019",
+    "Llano Stone Works",
+    "SAT-LRD",
+    "160",
+    "26",
+    "467.2",
+    "88.0",
+    "0.0",
+    "",
+    "1",
+    "TRK-1156",
+    "S. Patel"
+   ],
+   [
+    "BB429990",
+    "20261019",
+    "Red River Plastics",
+    "OKC-DAL",
+    "206",
+    "39",
+    "580.92",
+    "96.82",
+    "250.0",
+    "",
+    "1",
+    "TRK-1091",
+    "M. Okafor"
+   ],
+   [
+    "BB429991",
+    "20261019",
+    "Sabine Steel Fabricators",
+    "NOL-HOU",
+    "354",
+    "0",
+    "899.16",
+    "205.32",
+    "0.0",
+    "967.9",
+    "1",
+    "TRK-1055",
+    "S. Patel"
+   ],
+   [
+    "BB429992",
+    "20261019",
+    "Pecan Valley Foods",
+    "OKC-DAL",
+    "212",
+    "16",
+    "551.2",
+    "97.52",
+    "0.0",
+    "",
+    "1",
+    "TRK-1083",
+    "J. Bell"
+   ],
+   [
+    "BB429993",
+    "20261019",
+    "Brazos Bottling",
+    "NOL-HOU",
+    "357",
+    "0",
+    "1092.42",
+    "189.21",
+    "0.0",
+    "1057.51",
+    "1",
+    "TRK-1174",
+    "A. Ruiz"
+   ],
+   [
+    "BB429994",
+    "20261019",
+    "Caddo Lake Lumber",
+    "NOL-HOU",
+    "339",
+    "49",
+    "1040.73",
+    "155.94",
+    "0.0",
+    "",
+    "1",
+    "TRK-1110",
+    "S. Patel"
+   ],
+   [
+    "BB429995",
+    "20261019",
+    "Blue Mesa Appliances",
+    "AUS-DAL",
+    "200",
+    "0",
+    "510.0",
+    "90.0",
+    "0.0",
+    "515.53",
+    "1",
+    "TRK-1173",
+    "J. Bell"
+   ],
+   [
+    "BB429996",
+    "20261019",
+    "San Gabriel Glassworks",
+    "HOU-NOL",
+    "356",
+    "30",
+    "1075.12",
+    "170.88",
+    "100.0",
+    "",
+    "1",
+    "TRK-1047",
+    "K. Tran"
+   ]
+  ],
+  "last_rows": [
+   [
+    "BB430121",
+    "20261019",
+    "Mustang Auto Parts",
+    "DAL-SHV",
+    "190",
+    "0",
+    "425.6",
+    "91.2",
+    "0.0",
+    "450.17",
+    "0",
+    "TRK-1033",
+    "K. Tran"
+   ],
+   [
+    "BB430122",
+    "20261019",
+    "Mustang Auto Parts",
+    "DAL-SHV",
+    "192",
+    "0",
+    "460.8",
+    "107.52",
+    "0.0",
+    "470.08",
+    "1",
+    "TRK-1047",
+    "A. Ruiz"
+   ]
+  ],
+  "row_count": 139,
+  "schema": [
+   {
+    "field": "load_id",
+    "kind": "text",
+    "meaning": "the load's unique ID"
+   },
+   {
+    "field": "date",
+    "kind": "date",
+    "meaning": "the day the load shipped or was picked up"
+   },
+   {
+    "field": "customer",
+    "kind": "text",
+    "meaning": "the customer billed for the load"
+   },
+   {
+    "field": "lane",
+    "kind": "text",
+    "meaning": "origin and destination"
+   },
+   {
+    "field": "miles",
+    "kind": "whole number",
+    "meaning": "loaded miles"
+   },
+   {
+    "field": "empty_miles",
+    "kind": "whole number",
+    "meaning": "empty or deadhead miles driven to reach the load"
+   },
+   {
+    "field": "linehaul_rev",
+    "kind": "money",
+    "meaning": "linehaul revenue for the load"
+   },
+   {
+    "field": "fuel_surcharge",
+    "kind": "money",
+    "meaning": "fuel surcharge revenue for the load"
+   },
+   {
+    "field": "accessorials",
+    "kind": "money",
+    "meaning": "accessorial charges like detention or lumper fees, negative on a credit row"
+   },
+   {
+    "field": "carrier_cost",
+    "kind": "money",
+    "meaning": "what was paid to an outside carrier on a brokered load, blank on the company's own trucks"
+   },
+   {
+    "field": "on_time",
+    "kind": "yes or no",
+    "meaning": "whether the load was delivered on time"
+   }
+  ],
+  "known_layout_example": {
+   "header_rows": 2,
+   "columns": [
+    [
+     "Load #",
+     "load_id"
+    ],
+    [
+     "Ship Date",
+     "date"
+    ],
+    [
+     "Customer",
+     "customer"
+    ],
+    [
+     "Lane",
+     "lane"
+    ],
+    [
+     "Loaded Miles",
+     "miles"
+    ],
+    [
+     "Empty Miles",
+     "empty_miles"
+    ],
+    [
+     "Linehaul Rev",
+     "linehaul_rev"
+    ],
+    [
+     "Fuel Surcharge",
+     "fuel_surcharge"
+    ],
+    [
+     "Accessorials",
+     "accessorials"
+    ],
+    [
+     "Carrier Cost",
+     "carrier_cost"
+    ],
+    [
+     "On Time",
+     "on_time"
+    ]
+   ],
+   "date_format": "%m/%d/%Y",
+   "money_format": "text",
+   "on_time": {
+    "true": "Y",
+    "false": "N"
+   },
+   "totals_label": "TOTAL"
+  },
+  "formats": {
+   "date_format": "a Python strptime format string, like %m/%d/%Y",
+   "money_format": {
+    "text": "currency text like $1,234.56 and -$250.00",
+    "plain": "plain numbers like 1234.56 and -250",
+    "paren": "text like 1,234.56 with negatives in parentheses (250.00)"
+   }
+  }
+ },
+ "input_sha256": "09e05c35fc05575bf806c8ad713deb9bd7b729c4c7879527d37a1a493c81c8f5",
+ "ids": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "raw": "```json\n{\n  \"header_rows\": 1,\n  \"columns\": [\n    [\"LOAD\", \"load_id\"],\n    [\"DT\", \"date\"],\n    [\"CUST\", \"customer\"],\n    [\"LANE\", \"lane\"],\n    [\"LD MI\", \"miles\"],\n    [\"MT MI\", \"empty_miles\"],\n    [\"LH\", \"linehaul_rev\"],\n    [\"FSC\", \"fuel_surcharge\"],\n    [\"ACC\", \"accessorials\"],\n    [\"PT\", \"carrier_cost\"],\n    [\"OT\", \"on_time\"],\n    [\"EQUIP\", null],\n    [\"DISP\", null]\n  ],\n  \"date_format\": \"%Y%m%d\",\n  \"money_format\": \"plain\",\n  \"on_time\": {\n    \"true\": \"1\",\n    \"false\": \"0\"\n  },\n  \"totals_label\": null,\n  \"confidence\": {\n    \"load_id\": 0.98,\n    \"date\": 0.9,\n    \"customer\": 0.98,\n    \"lane\": 0.98,\n    \"miles\": 0.95,\n    \"empty_miles\": 0.93,\n    \"linehaul_rev\": 0.93,\n    \"fuel_surcharge\": 0.93,\n    \"accessorials\": 0.9,\n    \"carrier_cost\": 0.8,\n    \"on_time\": 0.82\n  },\n  \"notes\": \"PT is read as purchased transportation (carrier cost) because it is blank on some rows and doesn't equal LH+FSC+ACC, OT is read as on time with 1 meaning on time, every sampled date is 20261019 so %Y%m%d can't be checked against a day above 12, and IDs BB429986–BB430122 account for only 137 of the 138 data rows the row count implies, which may point to an out-of-sequence ID such as a credit row.\"\n}\n```",
+   "parsed": {
+    "header_rows": 1,
+    "columns": [
+     [
+      "LOAD",
+      "load_id"
+     ],
+     [
+      "DT",
+      "date"
+     ],
+     [
+      "CUST",
+      "customer"
+     ],
+     [
+      "LANE",
+      "lane"
+     ],
+     [
+      "LD MI",
+      "miles"
+     ],
+     [
+      "MT MI",
+      "empty_miles"
+     ],
+     [
+      "LH",
+      "linehaul_rev"
+     ],
+     [
+      "FSC",
+      "fuel_surcharge"
+     ],
+     [
+      "ACC",
+      "accessorials"
+     ],
+     [
+      "PT",
+      "carrier_cost"
+     ],
+     [
+      "OT",
+      "on_time"
+     ],
+     [
+      "EQUIP",
+      null
+     ],
+     [
+      "DISP",
+      null
+     ]
+    ],
+    "date_format": "%Y%m%d",
+    "money_format": "plain",
+    "on_time": {
+     "true": "1",
+     "false": "0"
+    },
+    "totals_label": null,
+    "confidence": {
+     "load_id": 0.98,
+     "date": 0.9,
+     "customer": 0.98,
+     "lane": 0.98,
+     "miles": 0.95,
+     "empty_miles": 0.93,
+     "linehaul_rev": 0.93,
+     "fuel_surcharge": 0.93,
+     "accessorials": 0.9,
+     "carrier_cost": 0.8,
+     "on_time": 0.82
+    },
+    "notes": "PT is read as purchased transportation (carrier cost) because it is blank on some rows and doesn't equal LH+FSC+ACC, OT is read as on time with 1 meaning on time, every sampled date is 20261019 so %Y%m%d can't be checked against a day above 12, and IDs BB429986–BB430122 account for only 137 of the 138 data rows the row count implies, which may point to an out-of-sequence ID such as a credit row."
+   },
+   "problems": [],
+   "meta": {
+    "ms": 11127,
+    "api_ms": 10985,
+    "input_tokens": 2,
+    "output_tokens": 1086,
+    "cost_usd": 0.0821442,
+    "models": [
+     "claude-opus-5-5"
+    ]
+   }
+  }
+ ],
+ "final": {
+  "parsed": {
+   "header_rows": 1,
+   "columns": [
+    [
+     "LOAD",
+     "load_id"
+    ],
+    [
+     "DT",
+     "date"
+    ],
+    [
+     "CUST",
+     "customer"
+    ],
+    [
+     "LANE",
+     "lane"
+    ],
+    [
+     "LD MI",
+     "miles"
+    ],
+    [
+     "MT MI",
+     "empty_miles"
+    ],
+    [
+     "LH",
+     "linehaul_rev"
+    ],
+    [
+     "FSC",
+     "fuel_surcharge"
+    ],
+    [
+     "ACC",
+     "accessorials"
+    ],
+    [
+     "PT",
+     "carrier_cost"
+    ],
+    [
+     "OT",
+     "on_time"
+    ],
+    [
+     "EQUIP",
+     null
+    ],
+    [
+     "DISP",
+     null
+    ]
+   ],
+   "date_format": "%Y%m%d",
+   "money_format": "plain",
+   "on_time": {
+    "true": "1",
+    "false": "0"
+   },
+   "totals_label": null,
+   "confidence": {
+    "load_id": 0.98,
+    "date": 0.9,
+    "customer": 0.98,
+    "lane": 0.98,
+    "miles": 0.95,
+    "empty_miles": 0.93,
+    "linehaul_rev": 0.93,
+    "fuel_surcharge": 0.93,
+    "accessorials": 0.9,
+    "carrier_cost": 0.8,
+    "on_time": 0.82
+   },
+   "notes": "PT is read as purchased transportation (carrier cost) because it is blank on some rows and doesn't equal LH+FSC+ACC, OT is read as on time with 1 meaning on time, every sampled date is 20261019 so %Y%m%d can't be checked against a day above 12, and IDs BB429986–BB430122 account for only 137 of the 138 data rows the row count implies, which may point to an out-of-sequence ID such as a credit row."
+  },
+  "valid": true,
+  "problems": []
+ },
+ "model": "claude-opus-5-5",
+ "cli": {
+  "model": "opus",
+  "flags": [
+   "--model",
+   "--output-format",
+   "--system-prompt",
+   "--tools",
+   "--disallowedTools",
+   "--strict-mcp-config",
+   "--no-session-persistence"
+  ],
+  "tools_off": "--tools"
+ },
+ "recorded_at": "2026-10-27T19:01:34+00:00",
+ "seconds": 12.3,
+ "intake": {
+  "accepted": true,
+  "reasons": [],
+  "exact_match": true
+ }
+}

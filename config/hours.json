@@ -1,0 +1,10 @@
+{
+ "note": "Estimates of the manual time each workflow takes and of the review a person still gives the automated version. They're labeled as estimates on the page, and anyone can change them there.",
+ "workflows": [
+  {"key": "daily_report", "baseline_hours": 2.5, "review_minutes": 15},
+  {"key": "intake", "baseline_hours": 1.5, "review_minutes": 10},
+  {"key": "deal_model", "baseline_hours": 10, "review_minutes": 90},
+  {"key": "memo", "baseline_hours": 6, "review_minutes": 60},
+  {"key": "deck", "baseline_hours": 5, "review_minutes": 45}
+ ]
+}

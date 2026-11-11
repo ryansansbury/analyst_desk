@@ -1,0 +1,98 @@
+# An excerpt of engine/intake.py, copied for the code view on this page. The view reads only this copy.
+
+"""Intake: recognize each file's layout, parse it into ledger facts, and map the files no parser knows.
+
+Every known layout has a deterministic parser that writes facts with a locator (a CSV row and column, a sheet and
+cell range, or a line of text), the raw text, and the plain-language step that turned it into a number. A TMS
+export whose headers match no known or saved layout needs a mapping of its columns to the schema, which comes from
+the intake agent's recorded run. The mapping is applied and then validated by the same checks every TMS file
+gets, and it's accepted only if all of them pass. Otherwise the file is quarantined with the reasons. An accepted
+mapping is saved as a layout, so the next file in that layout parses without the agent.
+"""
+
+# ...
+
+def recognize(sheet, layouts):
+    """The known or saved mapping whose header matches, or None."""
+    for m in layouts:
+        if matches(sheet, m):
+            return m
+    return None
+
+
+def sample_for_agent(sheet, n=10):
+    """What the intake agent sees: the first two rows, the next ten and the last two, as text."""
+    rows = sheet.rows()
+    show = lambda r: ["" if v is None else str(v) for v in r]  # noqa: E731
+    return {"top_rows": [show(r) for r in rows[:2]], "sample_rows": [show(r) for r in rows[2:2 + n]],
+            "last_rows": [show(r) for r in rows[-2:]], "row_count": len(rows)}
+
+
+def apply_mapping(sheet, mapping, ops_date):
+    """Typed rows, the totals row if the layout has one, and every value that didn't parse.
+
+    Rows are {field: value, 'row': sheet row}. A mapping that leaves a column unexplained, or names a schema
+    field twice, is a problem before any row is read."""
+    problems = []
+    cols = mapping.get("columns") or []
+    headers = header_texts(sheet, mapping.get("header_rows", 1))
+    while headers and not headers[-1]:
+        headers.pop()
+    by_header = {}
+    for h, f in cols:
+        if f is not None and f not in FIELDS:
+            problems.append(("mapping", f"{f} isn't a schema field"))
+        by_header[str(h).strip()] = f
+    fields = [by_header.get(h, "?") for h in headers]
+    unexplained = [h for h, f in zip(headers, fields) if f == "?"]
+    if unexplained:
+        problems.append(("mapping", f"the mapping doesn't cover {', '.join(unexplained)}"))
+    named = [f for f in fields if f not in (None, "?")]
+    for f in FIELDS:
+        if named.count(f) != 1:
+            problems.append(("mapping", f"{f} is mapped {named.count(f)} times"))
+    if problems:
+        return [], None, problems
+    col_of = {f: i for i, f in enumerate(fields) if f}
+    label = (mapping.get("totals_label") or "").strip().lower()
+    on_true, on_false = str(mapping["on_time"]["true"]), str(mapping["on_time"]["false"])
+    rows, totals = [], None
+    all_rows = sheet.rows()
+    for r in range(mapping.get("header_rows", 1) + 1, len(all_rows) + 1):
+        values = all_rows[r - 1]
+        if not any(v is not None and str(v).strip() for v in values):
+            continue
+        get = lambda f: values[col_of[f]] if col_of[f] < len(values) else None  # noqa: E731
+        if label and any(isinstance(v, str) and v.strip().lower() == label for v in values):
+            totals = {"row": r}
+            for f in ("miles", "empty_miles") + MONEY:
+                try:
+                    totals[f] = money(get(f)) if f in MONEY else whole(get(f))
+                except ParseError as e:
+                    problems.append(("types", f"totals row {r}: {e}"))
+            continue
+        row = {"row": r}
+        try:
+            row["load_id"] = None if get("load_id") is None else str(get("load_id")).strip()
+            raw_date = get("date")
+            row["date"] = None if raw_date is None else datetime.strptime(str(raw_date).strip(),
+                                                                          mapping["date_format"]).date().isoformat()
+            row["customer"] = None if get("customer") is None else str(get("customer")).strip()
+            row["lane"] = "" if get("lane") is None else str(get("lane")).strip()
+            row["miles"] = whole(get("miles")) or 0
+            row["empty_miles"] = whole(get("empty_miles")) or 0
+            for f in MONEY:
+                row[f] = money(get(f))
+            for f in ("linehaul_rev", "fuel_surcharge", "accessorials"):
+                row[f] = row[f] or 0
+            ot = get("on_time")
+            row["on_time"] = None if ot is None else True if str(ot).strip() == on_true else \
+                False if str(ot).strip() == on_false else "?"
+            if row["on_time"] == "?":
+                raise ParseError(f"on-time value {ot!r} is neither {on_true!r} nor {on_false!r}")
+        except (ParseError, ValueError) as e:
+            problems.append(("types", f"row {r}: {e}"))
+            continue
+        row["credit"] = row["miles"] == 0 and (row["linehaul_rev"] + row["fuel_surcharge"] + row["accessorials"]) < 0
+        rows.append(row)
+    return rows, totals, problems

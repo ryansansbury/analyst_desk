@@ -1,0 +1,6 @@
+{
+ "note": "Where the page lives once it's hosted, with no trailing slash, and the two links in its footer. The url adds the canonical link and makes the link-card image's address absolute. The repo and home links show in the footer, and the tests allow no other link off the page. Leave any of them empty to leave it out.",
+ "url": "https://www.ryansansbury.com/analyst-desk",
+ "repo": "https://github.com/ryansansbury/analyst_desk",
+ "home": "https://www.ryansansbury.com"
+}

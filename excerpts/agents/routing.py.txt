@@ -1,0 +1,56 @@
+# An excerpt of agents/routing.py, copied for the code view on this page. The view reads only this copy.
+
+"""Which model each agent runs on, chosen from the model comparison in evals/model_comparison.json.
+
+Every model in the comparison took the same tests with the same prompts and validation. For each agent the rule picks
+the cheapest model that clears that agent's quality bar, and ties go to the faster one. A model without a known price
+can't be called cheapest, so it wins only when no priced model clears the bar. The other models that clear the bar
+form the fallback, cheapest first. When none clears it, the agent stays on the default model. Every route says why.
+
+Validation can't judge how well prose reads, so config/models.json can hold an agent on a chosen model, like the memo
+on the strongest writer after a person has read every model's draft. A hold takes effect only when the held model
+cleared the same bar, and the rest that cleared it still form the fallback.
+
+The quality bars:
+- The intake mapper must match the answer key within one layout of the best model, and none of its misses may be a
+  mapping the checks accepted that would have changed the data.
+- The prose agents (the commentary, the deal analyst, the board deck and the memo) must pass validation on every
+  run, within the one repair request.
+"""
+
+# ...
+
+def clears(task, stats, best_exact):
+    """Whether one model's results on one task clear that task's bar."""
+    if not stats or not stats.get("runs"):
+        return False
+    if task == "intake_mapper":
+        return stats.get("exact", 0) >= best_exact - 1 and not stats.get("harmful")
+    return stats.get("valid", 0) == stats["runs"]
+
+
+def _order(stats):
+    price = stats.get("cost")
+    return (price is None, price if price is not None else 0.0, stats.get("seconds") or 0.0)
+
+
+def route(comparison, task, default, held=None):
+    """{task, model, fallback, why, tested, cleared}. why is held, cheapest, only, unpriced or none."""
+    models = (comparison or {}).get("models", [])
+    tested = [(m, m["tasks"][task]) for m in models if ((m.get("tasks") or {}).get(task) or {}).get("runs")]
+    best = max((s.get("exact", 0) for _, s in tested), default=0) if task == "intake_mapper" else 0
+    passing = sorted(((m, s) for m, s in tested if clears(task, s, best)), key=lambda ms: _order(ms[1]))
+    if not passing:
+        return {"task": task, "model": default, "fallback": [], "why": "none", "tested": len(tested), "cleared": 0}
+    if held in [m["id"] for m, _ in passing]:
+        return {"task": task, "model": held, "fallback": [m["id"] for m, _ in passing if m["id"] != held],
+                "why": "held", "tested": len(tested), "cleared": len(passing)}
+    chosen, stats = passing[0]
+    why = "unpriced" if stats.get("cost") is None else "only" if len(passing) == 1 else "cheapest"
+    return {"task": task, "model": chosen["id"], "fallback": [m["id"] for m, _ in passing[1:]], "why": why,
+            "tested": len(tested), "cleared": len(passing)}
+
+
+def routes(comparison, default="claude-opus", holds=None):
+    """Every agent's route. holds is {task: model id} from config/models.json."""
+    return {t: route(comparison, t, default, (holds or {}).get(t)) for t in TASKS}
