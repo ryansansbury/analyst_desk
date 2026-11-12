@@ -285,6 +285,10 @@ class Renderer:
     def prerun(self, file_names):
         w = self.w
         items = "".join(f"<li>{icon('file')}<code>{esc(n)}</code></li>" for n in file_names)
+        # The way into the tour names the arrow key. On a touch screen, which has no arrow key, app.js touchTour finds
+        # that clause in this paragraph and swaps it for a button that starts the tour. The page itself keeps the plain
+        # sentence, so a desktop draws it exactly as before.
+        assert w["prerun.text"].count(w["prerun.tour.keys"]) == 1, "prerun.text must hold prerun.tour.keys once"
         return (f"<section class=\"panel prerun\"><h3>{esc(w['prerun.title'])}</h3><p>{esc(w['prerun.text'])}</p>"
                 f"<ul class=\"files\">{items}</ul></section>")
 

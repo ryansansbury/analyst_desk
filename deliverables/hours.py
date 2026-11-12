@@ -80,15 +80,17 @@ def render(rows_, words):
                     f"<div class=\"tile-value\">{out(t[k], k)}</div><p class=\"tile-foot\">{esc(w['hours.k.' + k + '.foot'])}</p>"
                     f"</div>" for k in ("week", "today", "manual", "review"))
     body = []
+    # Each cell carries its column's name, so on a phone the table can read as one labeled card per workflow (app.css).
+    lab = {k: f" data-label=\"{esc(w['hours.col.' + k])}\"" for k in ("runs", "measured", "baseline", "review", "back")}
     for r in rows_:
         body.append(f"<tr data-row=\"{r['key']}\" data-runs=\"{r['runs']}\" data-seconds=\"{r['seconds']}\">"
-                    f"<td>{esc(w['hours.wf.' + r['key']])}</td><td class=\"r\"><span data-src=\"runlog\">{r['runs']}</span></td>"
-                    f"<td class=\"r\">{measured(r, w)}</td>"
-                    f"<td class=\"r\"><input type=\"number\" autocomplete=\"off\" min=\"0\" max=\"80\" step=\"0.5\" value=\"{r['baseline']}\" "
+                    f"<td>{esc(w['hours.wf.' + r['key']])}</td><td class=\"r\"{lab['runs']}><span data-src=\"runlog\">{r['runs']}</span></td>"
+                    f"<td class=\"r\"{lab['measured']}>{measured(r, w)}</td>"
+                    f"<td class=\"r\"{lab['baseline']}><input type=\"number\" autocomplete=\"off\" min=\"0\" max=\"80\" step=\"0.5\" value=\"{r['baseline']}\" "
                     f"aria-label=\"{esc(w['hours.wf.' + r['key']] + ', ' + w['hours.col.baseline'])}\" data-k=\"baseline\"></td>"
-                    f"<td class=\"r\"><input type=\"number\" autocomplete=\"off\" min=\"0\" max=\"600\" step=\"5\" value=\"{r['review']}\" "
+                    f"<td class=\"r\"{lab['review']}><input type=\"number\" autocomplete=\"off\" min=\"0\" max=\"600\" step=\"5\" value=\"{r['review']}\" "
                     f"aria-label=\"{esc(w['hours.wf.' + r['key']] + ', ' + w['hours.col.review'])}\" data-k=\"review\"></td>"
-                    f"<td class=\"r\"><strong>{out(back(r), 'back')}</strong></td></tr>")
+                    f"<td class=\"r\"{lab['back']}><strong>{out(back(r), 'back')}</strong></td></tr>")
     cols = "".join(f"<th{' class=\"r\"' if k != 'workflow' else ''}>{esc(w['hours.col.' + k])}</th>"
                    for k in ("workflow", "runs", "measured", "baseline", "review", "back"))
     top = max([manual(r) for r in rows_] + [automated(r) for r in rows_] + [1e-9])

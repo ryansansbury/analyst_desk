@@ -215,6 +215,12 @@ Eleven files are waiting
 ## prerun.text
 This is one demo morning at a fund with three synthetic portfolio companies. Their systems sent eleven overnight files before 6 AM. Run the morning to receive, map, check, and tie them out, or press the right arrow for a guided tour.
 
+## prerun.tour.keys
+press the right arrow for a guided tour
+
+## prerun.tour.touch
+take the guided tour
+
 ## banner.published
 Published. Every figure ties to its source file and every check passed.
 
@@ -1469,6 +1475,15 @@ Hours back measured on every automated workflow.
 
 ## presenter.label
 Step {n} of {total}
+
+## presenter.back
+Back
+
+## presenter.next
+Next
+
+## presenter.end
+End the tour
 
 ## presenter.s.problem
 The problem

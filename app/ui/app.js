@@ -10,6 +10,8 @@
   /* True while presenter mode replays the steps before the one a link or the left arrow opens. Those steps set up
      the state without scrolling, so only the last one scrolls and no two smooth scrolls race to place the page. */
   var QUIET = false;
+  /* A touch screen without a mouse, which is a phone or a tablet. The tour's touch controls key off it. */
+  var TOUCH = !!(win.matchMedia && win.matchMedia("(hover: none) and (pointer: coarse)").matches);
 
   function esc(s) {
     return String(s === null || s === undefined ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -656,9 +658,57 @@
     $(".pc", box).textContent = caption;
     box.hidden = false;
     box.classList.remove("fade");
-    if (P.timer) { win.clearTimeout(P.timer); }
+    if (P.timer) { win.clearTimeout(P.timer); P.timer = null; }
+    /* On a touch screen the box holds the tour's Back, Next and End, so it stays until the tour ends. */
+    $$("[data-tour]", box).forEach(function (b) {
+      var t = b.getAttribute("data-tour");
+      b.disabled = (t === "back" && k === 0) || (t === "next" && k === STEPS.length - 1);
+    });
+    if (TOUCH) { return; }
     P.timer = win.setTimeout(function () { box.classList.add("fade"); }, caption ? 9000 : 2000);
   }
+  /* ------------------------------------------------------------------ the tour on a touch screen
+     A phone or a tablet has no arrow keys. There the intro's arrow clause becomes a button that opens the tour at its
+     first step, and the step box carries Back, Next and End. Back and Next do what the arrow keys do, and End closes
+     the box and leaves the page where the tour left it. A desktop with a mouse never sees any of it. */
+  function touchTour(root) {
+    var keys = U["prerun.tour.keys"], p = root && $(".prerun p", root);
+    if (!TOUCH || !p || !keys || $(".tour-hint", p)) { return; }
+    Array.prototype.some.call(p.childNodes, function (node) {
+      var at = node.nodeType === 3 ? node.nodeValue.indexOf(keys) : -1;
+      if (at < 0) { return false; }
+      var rest = node.splitText(at), s = doc.createElement("span"), b = doc.createElement("button");
+      rest.nodeValue = rest.nodeValue.slice(keys.length);
+      s.className = "tour-hint";
+      b.type = "button";
+      b.className = "linkbtn";
+      b.setAttribute("data-tour", "start");
+      b.textContent = U["prerun.tour.touch"] || "";
+      s.appendChild(b);
+      p.insertBefore(s, rest);
+      return true;
+    });
+  }
+  function endTour() {
+    var box = $("#presenter");
+    if (P.timer) { win.clearTimeout(P.timer); P.timer = null; }
+    if (box) { box.hidden = true; }
+    try {
+      if (win.history && win.history.replaceState && win.location) {
+        win.history.replaceState(null, "", win.location.pathname + win.location.search);
+      }
+    } catch (err) { /* a page opened from a file may refuse, and the step in the address does no harm */ }
+  }
+  ADP.endTour = endTour;
+  doc.addEventListener("click", function (e) {
+    var t = e.target && e.target.closest ? e.target.closest("[data-tour]") : null;
+    if (!t || t.disabled) { return; }
+    var what = t.getAttribute("data-tour");
+    if (what === "start") { go(0, false); }
+    else if (what === "next") { go(P.i + 1, true); }
+    else if (what === "back") { go(P.i - 1, false); }
+    else if (what === "end") { endTour(); }
+  });
   function remember(k) {
     var hash = "#step-" + (k + 1);
     try {
@@ -716,6 +766,9 @@
   doc.addEventListener("mouseover", showTip);
   doc.addEventListener("focusin", showTip);
   doc.addEventListener("focusout", function () { if (tip) { tip.hidden = true; } });
+  /* A tap shows a tip the way a hover does, and on a touch screen the tip goes once the page scrolls, since it's placed
+     where the tapped mark was. */
+  if (TOUCH) { win.addEventListener("scroll", function () { if (tip) { tip.hidden = true; } }, {passive: true}); }
 
   /* ------------------------------------------------------------------ the spill rule
      Paragraphs run the full width of their section, and CSS's pretty wrapping keeps a single word from standing alone
@@ -873,6 +926,7 @@
   }
   ADP.keepLast = keepLast;
   function rebalance() {
+    touchTour($("#portfolio-body"));
     [$("#portfolio-body"), $("#strip"), $("#drawer-body")].forEach(function (root) { nbText(root); keepLast(root); });
     placeLabels(doc);
   }

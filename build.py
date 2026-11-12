@@ -204,7 +204,8 @@ def build(out=None, quiet=False, runs=None, write_data=True, comparison=None):
                                  "drawer.quarantined", "drawer.preview", "drawer.kicker", "drawer.kicker.file", "controls.run", "controls.replay", "controls.skip",
                                  "deal.formula.hint", "deal.formula.input", "deal.formula.trace", "hours.unit",
                                  "hours.legend.manual", "hours.legend.auto",
-                                 "presenter.label") + tuple("presenter.s." + s for s in STEPS)
+                                 "presenter.label", "presenter.back", "presenter.next", "presenter.end",
+                                 "prerun.tour.keys", "prerun.tour.touch") + tuple("presenter.s." + s for s in STEPS)
                                 + tuple("presenter.c." + s for s in STEPS)}
     b["meta"]["steps"] = steps_for(routes_html)
     portfolio_section = (f"<section class=\"tab\" id=\"t-portfolio\" data-tab-panel=\"portfolio\" role=\"tabpanel\">"
@@ -218,8 +219,13 @@ def build(out=None, quiet=False, runs=None, write_data=True, comparison=None):
              for k, html_ in (("hours", hours_html), ("how", how_html))]
     body = render.page(w, header_html(w, hours.today(hour_rows)),
                        [portfolio_section, deal_section, board_section] + extra, TABS, footer_links(w))
+    # The tour's Back, Next and End show only on a touch screen, which has no arrow keys (app.css and app.js touchTour).
+    tour = (f"<span class=\"pctl\"><button type=\"button\" class=\"btn\" data-tour=\"back\">{render.esc(w['presenter.back'])}"
+            f"</button><button type=\"button\" class=\"btn primary\" data-tour=\"next\">{render.esc(w['presenter.next'])}"
+            f"</button><button type=\"button\" class=\"btn icon\" data-tour=\"end\" aria-label=\"{render.esc(w['presenter.end'])}\">"
+            f"{render.icon('x')}</button></span>")
     body += ("<div id=\"presenter\" class=\"presenter\" role=\"status\" aria-live=\"polite\" hidden>"
-             "<span class=\"pn\"></span><span class=\"pl\"></span><span class=\"pc\"></span></div>")
+             f"<span class=\"pn\"></span><span class=\"pl\"></span><span class=\"pc\"></span>{tour}</div>")
     head = ("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">"
             f"{SLASH_GUARD}<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
             f"<meta name=\"referrer\" content=\"no-referrer\">{meta_tags(w)}"
