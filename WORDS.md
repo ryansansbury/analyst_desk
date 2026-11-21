@@ -9,7 +9,7 @@ Analyst Desk
 One source of truth for the fund's deals and portfolio companies.
 
 ## page.footer
-Built by Ryan Sansbury. Every company, number, and document here is synthetic.
+Every company, number, and document here is synthetic.
 
 ## page.footer.code
 The code is on {link}.
@@ -18,7 +18,7 @@ The code is on {link}.
 GitHub
 
 ## page.footer.home
-More of Ryan's work is at {link}.
+More projects are at {link}.
 
 ## page.description
 A working demo of an AI operations desk for a fund. Agents read and draft, code checks every number, and every figure traces to its source.

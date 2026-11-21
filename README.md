@@ -6,7 +6,7 @@ The live demo is at [ryansansbury.com/analyst-desk](https://www.ryansansbury.com
 
 ![The Portfolio tab after the morning run with every file mapped, checked, and tied out](docs/screenshots/portfolio.png)
 
-Built by Ryan Sansbury. Every company, person, number, and document here is synthetic.
+Every company, person, number, and document here is synthetic.
 
 ## Run it locally
 
@@ -73,7 +73,7 @@ The build writes this table from the same files the How it works tab reads once 
 | False alarms | 0 | Across the same held-out seeds |
 | Look-alikes left alone | 9 of 9 | Normal days that only look like errors |
 | New layouts mapped exactly | 10 of 12 | Held-out layouts the agent had never seen, and the other 2 still parsed every row like the answer key |
-| Tests passing | 148 of 148 | In the last full run on November 10 |
+| Tests passing | 148 of 148 | In the last full run on November 20 |
 | Workbook against Python | 74 values | Each formula's value matches the Python model to the cent |
 | LibreOffice recalculation | 383 formulas | Recalculated from scratch, and each one matched to the cent |
 | Agent runs recorded | 17 | With Claude Haiku 5.5, Claude Opus 5.5, and GPT-6 Luna from October 27 to 29 |

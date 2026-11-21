@@ -34,9 +34,9 @@ class Words(unittest.TestCase):
     def test_words_md_passes_the_writing_rules(self):
         self.assertEqual(helpers.copy_problems(words.PATH), [])
 
-    def test_the_footer_names_the_author_and_says_synthetic(self):
+    def test_the_footer_says_synthetic_and_names_no_one(self):
         footer = words.load()["page.footer"]
-        self.assertIn("Built by Ryan Sansbury.", footer)
+        self.assertNotIn("Ryan", footer)
         self.assertIn("synthetic", footer)
 
 

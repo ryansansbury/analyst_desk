@@ -102,7 +102,9 @@ class Page(unittest.TestCase):
                     "<meta name=\"twitter:card\" content=\"summary_large_image\">"):
             self.assertIn(tag, head)
         footer = self.index.rsplit("<footer>", 1)[1].split("</footer>", 1)[0]
-        self.assertIn("Built by Ryan Sansbury. Every company, number, and document here is synthetic.", footer)
+        self.assertIn("Every company, number, and document here is synthetic.", footer)
+        # His name appears only inside the link to his site (11/20, his rule for every demo).
+        self.assertNotIn("Ryan", footer.replace("ryansansbury.com", ""))
         self.assertNotIn("recorded on", footer)
 
     def test_the_only_links_off_the_page_are_the_footers_two(self):
